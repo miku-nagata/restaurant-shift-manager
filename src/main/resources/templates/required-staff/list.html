@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>必要人数一覧</title>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #333;
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+<h1>必要人数一覧</h1>
+
+<p>日付・時間帯ごとの必要人数を表示します。</p>
+
+<p>
+    <a href="/required-staff/new">必要人数を新規登録する</a>
+</p>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>日付</th>
+        <th>開始時刻</th>
+        <th>終了時刻</th>
+        <th>必要人数</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="requiredStaff : ${requiredStaffList}">
+        <td th:text="${requiredStaff.id}">1</td>
+        <td th:text="${requiredStaff.workDate}">2026-07-01</td>
+        <td th:text="${requiredStaff.startTime}">10:00</td>
+        <td th:text="${requiredStaff.endTime}">14:00</td>
+        <td th:text="${requiredStaff.requiredCount}">5</td>
+        <td>
+            <form th:action="@{/required-staff/{id}/delete(id=${requiredStaff.id})}" method="post" style="display:inline;">
+                <button type="submit" onclick="return confirm('この必要人数設定を削除しますか？');">
+                    削除
+                </button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<p>
+    <a href="/">トップページへ戻る</a>
+</p>
+</body>
+</html>
