@@ -1,15 +1,25 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>従業員一覧</title>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #333;
+            padding: 8px;
+        }
+    </style>
 </head>
 <body>
 <h1>従業員一覧</h1>
 
 <p>登録されている従業員を表示します。</p>
 
-<table border="1">
+<table>
     <thead>
     <tr>
         <th>ID</th>
@@ -19,17 +29,11 @@
     </tr>
     </thead>
     <tbody>
-    <tr>
-        <td>1</td>
-        <td>山田 太郎</td>
-        <td>アルバイト</td>
-        <td>通常</td>
-    </tr>
-    <tr>
-        <td>2</td>
-        <td>佐藤 花子</td>
-        <td>パート</td>
-        <td>ベテラン</td>
+    <tr th:each="employee : ${employees}">
+        <td th:text="${employee.id}">1</td>
+        <td th:text="${employee.name}">山田 太郎</td>
+        <td th:text="${employee.employmentType}">アルバイト</td>
+        <td th:text="${employee.skillLevel}">通常</td>
     </tr>
     </tbody>
 </table>
