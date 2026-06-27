@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>従業員登録</title>
+</head>
+<body>
+<h1>従業員登録</h1>
+
+<form th:action="@{/employees}" th:object="${employee}" method="post">
+    <p>
+        <label for="name">氏名</label><br>
+        <input type="text" id="name" th:field="*{name}">
+    </p>
+
+    <p>
+        <label for="employmentType">雇用形態</label><br>
+        <select id="employmentType" th:field="*{employmentType}">
+            <option value="">選択してください</option>
+            <option value="正社員">正社員</option>
+            <option value="パート">パート</option>
+            <option value="アルバイト">アルバイト</option>
+            <option value="留学生">留学生</option>
+        </select>
+    </p>
+
+    <p>
+        <label for="skillLevel">熟練度</label><br>
+        <select id="skillLevel" th:field="*{skillLevel}">
+            <option value="">選択してください</option>
+            <option value="新人">新人</option>
+            <option value="通常">通常</option>
+            <option value="ベテラン">ベテラン</option>
+        </select>
+    </p>
+
+    <button type="submit">登録する</button>
+</form>
+
+<p>
+    <a href="/employees">従業員一覧へ戻る</a>
+</p>
+</body>
+</html>
