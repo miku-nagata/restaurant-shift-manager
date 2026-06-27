@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>勤務希望一覧</title>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #333;
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+<h1>勤務希望一覧</h1>
+
+<p>登録されている勤務希望を表示します。</p>
+
+<p>
+    <a href="/shift-requests/new">勤務希望を新規登録する</a>
+</p>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>従業員名</th>
+        <th>日付</th>
+        <th>開始時刻</th>
+        <th>終了時刻</th>
+        <th>希望区分</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="shiftRequest : ${shiftRequests}">
+        <td th:text="${shiftRequest.id}">1</td>
+        <td th:text="${shiftRequest.employee.name}">山田 太郎</td>
+        <td th:text="${shiftRequest.workDate}">2026-07-01</td>
+        <td th:text="${shiftRequest.startTime}">10:00</td>
+        <td th:text="${shiftRequest.endTime}">14:00</td>
+        <td th:text="${shiftRequest.requestType}">出勤希望</td>
+    </tr>
+    </tbody>
+</table>
+
+<p>
+    <a href="/">トップページへ戻る</a>
+</p>
+</body>
+</html>
