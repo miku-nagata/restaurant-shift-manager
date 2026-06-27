@@ -4,6 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
@@ -26,7 +27,6 @@ public class EmployeeController {
         return "employees/list";
     }
 
-    // 登録フォームを表示する
     @GetMapping("/employees/new")
     public String newForm(Model model) {
         model.addAttribute("employee", new Employee());
@@ -34,9 +34,32 @@ public class EmployeeController {
         return "employees/form";
     }
 
-    // 登録内容を保存する
     @PostMapping("/employees")
     public String create(@ModelAttribute Employee employee) {
+        employeeRepository.save(employee);
+
+        return "redirect:/employees";
+    }
+
+    @GetMapping("/employees/{id}/edit")
+    public String editForm(@PathVariable Long id, Model model) {
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("従業員が見つかりません: " + id));
+
+        model.addAttribute("employee", employee);
+
+        return "employees/edit";
+    }
+
+    @PostMapping("/employees/{id}/edit")
+    public String update(@PathVariable Long id, @ModelAttribute Employee formEmployee) {
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("従業員が見つかりません: " + id));
+
+        employee.setName(formEmployee.getName());
+        employee.setEmploymentType(formEmployee.getEmploymentType());
+        employee.setSkillLevel(formEmployee.getSkillLevel());
+
         employeeRepository.save(employee);
 
         return "redirect:/employees";

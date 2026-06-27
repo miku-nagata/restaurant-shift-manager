@@ -30,6 +30,7 @@
         <th>氏名</th>
         <th>雇用形態</th>
         <th>熟練度</th>
+        <th>操作</th>
     </tr>
     </thead>
     <tbody>
@@ -38,6 +39,9 @@
         <td th:text="${employee.name}">山田 太郎</td>
         <td th:text="${employee.employmentType}">アルバイト</td>
         <td th:text="${employee.skillLevel}">通常</td>
+        <td>
+            <a th:href="@{/employees/{id}/edit(id=${employee.id})}">編集</a>
+        </td>
     </tr>
     </tbody>
 </table>
