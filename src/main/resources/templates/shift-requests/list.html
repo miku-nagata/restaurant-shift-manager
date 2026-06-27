@@ -32,6 +32,7 @@
         <th>開始時刻</th>
         <th>終了時刻</th>
         <th>希望区分</th>
+        <th>操作</th>
     </tr>
     </thead>
     <tbody>
@@ -42,6 +43,13 @@
         <td th:text="${shiftRequest.startTime}">10:00</td>
         <td th:text="${shiftRequest.endTime}">14:00</td>
         <td th:text="${shiftRequest.requestType}">出勤希望</td>
+        <td>
+            <form th:action="@{/shift-requests/{id}/delete(id=${shiftRequest.id})}" method="post" style="display:inline;">
+                <button type="submit" onclick="return confirm('この勤務希望を削除しますか？');">
+                    削除
+                </button>
+            </form>
+        </td>
     </tr>
     </tbody>
 </table>

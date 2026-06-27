@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class ShiftRequestController {
@@ -54,6 +55,13 @@ public class ShiftRequestController {
         ShiftRequest shiftRequest = new ShiftRequest(employee, workDate, startTime, endTime, requestType);
 
         shiftRequestRepository.save(shiftRequest);
+
+        return "redirect:/shift-requests";
+    }
+
+    @PostMapping("/shift-requests/{id}/delete")
+    public String delete(@PathVariable Long id) {
+        shiftRequestRepository.deleteById(id);
 
         return "redirect:/shift-requests";
     }
