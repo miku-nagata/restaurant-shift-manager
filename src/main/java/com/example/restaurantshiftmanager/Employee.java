@@ -5,11 +5,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
-// このjavaクラスをDBのテーブルとして扱う
 @Entity
 public class Employee {
 
-    // id を主キーにして、自動採番する
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,13 +18,23 @@ public class Employee {
 
     private String skillLevel;
 
+    private Integer hourlyWage;
+
+    private Integer monthlyHourLimit;
+
+    private Integer monthlyIncomeLimit;
+
     public Employee() {
     }
 
-    public Employee(String name, String employmentType, String skillLevel) {
+    public Employee(String name, String employmentType, String skillLevel,
+                    Integer hourlyWage, Integer monthlyHourLimit, Integer monthlyIncomeLimit) {
         this.name = name;
         this.employmentType = employmentType;
         this.skillLevel = skillLevel;
+        this.hourlyWage = hourlyWage;
+        this.monthlyHourLimit = monthlyHourLimit;
+        this.monthlyIncomeLimit = monthlyIncomeLimit;
     }
 
     public Long getId() {
@@ -45,6 +53,18 @@ public class Employee {
         return skillLevel;
     }
 
+    public Integer getHourlyWage() {
+        return hourlyWage;
+    }
+
+    public Integer getMonthlyHourLimit() {
+        return monthlyHourLimit;
+    }
+
+    public Integer getMonthlyIncomeLimit() {
+        return monthlyIncomeLimit;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -59,5 +79,17 @@ public class Employee {
 
     public void setSkillLevel(String skillLevel) {
         this.skillLevel = skillLevel;
+    }
+
+    public void setHourlyWage(Integer hourlyWage) {
+        this.hourlyWage = hourlyWage;
+    }
+
+    public void setMonthlyHourLimit(Integer monthlyHourLimit) {
+        this.monthlyHourLimit = monthlyHourLimit;
+    }
+
+    public void setMonthlyIncomeLimit(Integer monthlyIncomeLimit) {
+        this.monthlyIncomeLimit = monthlyIncomeLimit;
     }
 }

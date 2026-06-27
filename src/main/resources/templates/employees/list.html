@@ -30,6 +30,9 @@
         <th>氏名</th>
         <th>雇用形態</th>
         <th>熟練度</th>
+        <th>時給</th>
+        <th>月上限時間</th>
+        <th>月上限金額</th>
         <th>操作</th>
     </tr>
     </thead>
@@ -39,6 +42,9 @@
         <td th:text="${employee.name}">山田 太郎</td>
         <td th:text="${employee.employmentType}">アルバイト</td>
         <td th:text="${employee.skillLevel}">通常</td>
+        <td th:text="${employee.hourlyWage}">1000</td>
+        <td th:text="${employee.monthlyHourLimit}">80</td>
+        <td th:text="${employee.monthlyIncomeLimit}">88000</td>
         <td>
             <a th:href="@{/employees/{id}/edit(id=${employee.id})}">編集</a>
 

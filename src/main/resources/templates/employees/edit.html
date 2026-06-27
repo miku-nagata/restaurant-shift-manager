@@ -34,6 +34,21 @@
         </select>
     </p>
 
+    <p>
+        <label for="hourlyWage">時給</label><br>
+        <input type="number" id="hourlyWage" th:field="*{hourlyWage}">
+    </p>
+
+    <p>
+        <label for="monthlyHourLimit">月上限時間</label><br>
+        <input type="number" id="monthlyHourLimit" th:field="*{monthlyHourLimit}">
+    </p>
+
+    <p>
+        <label for="monthlyIncomeLimit">月上限金額</label><br>
+        <input type="number" id="monthlyIncomeLimit" th:field="*{monthlyIncomeLimit}">
+    </p>
+
     <button type="submit">更新する</button>
 </form>
 

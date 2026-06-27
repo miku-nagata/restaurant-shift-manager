@@ -59,6 +59,9 @@ public class EmployeeController {
         employee.setName(formEmployee.getName());
         employee.setEmploymentType(formEmployee.getEmploymentType());
         employee.setSkillLevel(formEmployee.getSkillLevel());
+        employee.setHourlyWage(formEmployee.getHourlyWage());
+        employee.setMonthlyHourLimit(formEmployee.getMonthlyHourLimit());
+        employee.setMonthlyIncomeLimit(formEmployee.getMonthlyIncomeLimit());
 
         employeeRepository.save(employee);
 
