@@ -42,20 +42,10 @@ public class RequiredStaffController {
             @RequestParam Integer requiredCount,
             Model model
     ) {
-        if (!startTime.isBefore(endTime)) {
-            model.addAttribute("errorMessage", "開始時刻は終了時刻より前にしてください。");
-            model.addAttribute("timeOptions", createTimeOptions());
+        String errorMessage = validateRequiredStaff(null, workDate, startTime, endTime, requiredCount);
 
-            model.addAttribute("workDate", workDate);
-            model.addAttribute("selectedStartTime", startTime.toString());
-            model.addAttribute("selectedEndTime", endTime.toString());
-            model.addAttribute("requiredCount", requiredCount);
-
-            return "required-staff/form";
-        }
-
-        if (requiredCount == null || requiredCount < 1) {
-            model.addAttribute("errorMessage", "必要人数は1人以上で入力してください。");
+        if (errorMessage != null) {
+            model.addAttribute("errorMessage", errorMessage);
             model.addAttribute("timeOptions", createTimeOptions());
 
             model.addAttribute("workDate", workDate);
@@ -100,16 +90,10 @@ public class RequiredStaffController {
         requiredStaff.setEndTime(endTime);
         requiredStaff.setRequiredCount(requiredCount);
 
-        if (!startTime.isBefore(endTime)) {
-            model.addAttribute("errorMessage", "開始時刻は終了時刻より前にしてください。");
-            model.addAttribute("requiredStaff", requiredStaff);
-            model.addAttribute("timeOptions", createTimeOptions());
+        String errorMessage = validateRequiredStaff(id, workDate, startTime, endTime, requiredCount);
 
-            return "required-staff/edit";
-        }
-
-        if (requiredCount == null || requiredCount < 1) {
-            model.addAttribute("errorMessage", "必要人数は1人以上で入力してください。");
+        if (errorMessage != null) {
+            model.addAttribute("errorMessage", errorMessage);
             model.addAttribute("requiredStaff", requiredStaff);
             model.addAttribute("timeOptions", createTimeOptions());
 
@@ -125,6 +109,40 @@ public class RequiredStaffController {
     public String delete(@PathVariable Long id) {
         requiredStaffRepository.deleteById(id);
         return "redirect:/required-staff";
+    }
+
+    private String validateRequiredStaff(Long currentRequiredStaffId,
+                                         LocalDate workDate,
+                                         LocalTime startTime,
+                                         LocalTime endTime,
+                                         Integer requiredCount) {
+        if (!startTime.isBefore(endTime)) {
+            return "開始時刻は終了時刻より前にしてください。";
+        }
+
+        if (requiredCount == null || requiredCount < 1) {
+            return "必要人数は1人以上で入力してください。";
+        }
+
+        List<RequiredStaff> requiredStaffList = requiredStaffRepository.findAll();
+
+        for (RequiredStaff existingRequiredStaff : requiredStaffList) {
+            if (currentRequiredStaffId != null && existingRequiredStaff.getId().equals(currentRequiredStaffId)) {
+                continue;
+            }
+
+            boolean sameDate = existingRequiredStaff.getWorkDate().equals(workDate);
+
+            boolean overlaps =
+                    startTime.isBefore(existingRequiredStaff.getEndTime()) &&
+                            endTime.isAfter(existingRequiredStaff.getStartTime());
+
+            if (sameDate && overlaps) {
+                return "同じ日付・時間帯に必要人数設定が登録されています。";
+            }
+        }
+
+        return null;
     }
 
     private List<String> createTimeOptions() {
