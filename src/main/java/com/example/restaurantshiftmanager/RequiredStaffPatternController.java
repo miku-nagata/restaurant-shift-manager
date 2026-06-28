@@ -14,17 +14,22 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Controller
 public class RequiredStaffPatternController {
 
     private final RequiredStaffPatternRepository requiredStaffPatternRepository;
     private final RequiredStaffRepository requiredStaffRepository;
+    private final RegularHolidayRepository regularHolidayRepository;
 
     public RequiredStaffPatternController(RequiredStaffPatternRepository requiredStaffPatternRepository,
-                                          RequiredStaffRepository requiredStaffRepository) {
+                                          RequiredStaffRepository requiredStaffRepository,
+                                          RegularHolidayRepository regularHolidayRepository) {
         this.requiredStaffPatternRepository = requiredStaffPatternRepository;
         this.requiredStaffRepository = requiredStaffRepository;
+        this.regularHolidayRepository = regularHolidayRepository;
     }
 
     @GetMapping("/required-staff-patterns")
@@ -166,8 +171,15 @@ public class RequiredStaffPatternController {
         List<RequiredStaff> existingRequiredStaffList =
                 new ArrayList<>(requiredStaffRepository.findAll());
 
+        Set<Integer> regularHolidayDayOfWeeks = new HashSet<>();
+
+        for (RegularHoliday regularHoliday : regularHolidayRepository.findAll()) {
+            regularHolidayDayOfWeeks.add(regularHoliday.getDayOfWeek());
+        }
+
         int createdCount = 0;
         int skippedCount = 0;
+        int holidaySkippedCount = 0;
 
         for (int day = 1; day <= targetMonth.lengthOfMonth(); day++) {
             LocalDate date = targetMonth.atDay(day);
@@ -175,6 +187,11 @@ public class RequiredStaffPatternController {
 
             for (RequiredStaffPattern pattern : patterns) {
                 if (!pattern.getDayOfWeek().equals(dayOfWeek)) {
+                    continue;
+                }
+
+                if (regularHolidayDayOfWeeks.contains(dayOfWeek)) {
+                    holidaySkippedCount++;
                     continue;
                 }
 
@@ -206,7 +223,9 @@ public class RequiredStaffPatternController {
 
         model.addAttribute("successMessage",
                 year + "年" + month + "月へ必要人数パターンを反映しました。"
-                        + " 作成：" + createdCount + "件、スキップ：" + skippedCount + "件");
+                        + " 作成：" + createdCount + "件"
+                        + "、重複スキップ：" + skippedCount + "件"
+                        + "、定休日スキップ：" + holidaySkippedCount + "件");
 
         model.addAttribute("year", year);
         model.addAttribute("month", month);
