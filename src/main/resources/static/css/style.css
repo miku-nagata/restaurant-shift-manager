@@ -147,3 +147,11 @@ button:hover {
     color: #991b1b;
     font-weight: 600;
 }
+
+button.danger-button {
+    background-color: #dc2626;
+}
+
+button.danger-button:hover {
+    background-color: #b91c1c;
+}

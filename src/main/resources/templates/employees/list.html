@@ -51,7 +51,7 @@
             <a th:href="@{/employees/{id}/edit(id=${employee.id})}">編集</a>
 
             <form th:action="@{/employees/{id}/delete(id=${employee.id})}" method="post" style="display:inline;">
-                <button type="submit" onclick="return confirm('この従業員を削除しますか？');">
+                <button type="submit" class="danger-button" onclick="return confirm('この従業員を削除しますか？');">
                     削除
                 </button>
             </form>

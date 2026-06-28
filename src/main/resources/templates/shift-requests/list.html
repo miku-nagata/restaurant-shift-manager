@@ -47,7 +47,7 @@
         <td th:text="${shiftRequest.requestType}">出勤希望</td>
         <td>
             <form th:action="@{/shift-requests/{id}/delete(id=${shiftRequest.id})}" method="post" style="display:inline;">
-                <button type="submit" onclick="return confirm('この勤務希望を削除しますか？');">
+                <button type="submit" class="danger-button" onclick="return confirm('この勤務希望を削除しますか？');">
                     削除
                 </button>
             </form>
