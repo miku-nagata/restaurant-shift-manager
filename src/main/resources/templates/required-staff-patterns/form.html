@@ -10,7 +10,7 @@
     <h1>必要人数パターン登録</h1>
 
     <p class="page-description">
-        曜日ごとの基本的な必要人数を登録します。
+        曜日ごとの基本的な必要人数を登録します。複数の曜日をまとめて選択できます。
     </p>
 
     <p class="error-message" th:if="${errorMessage}" th:text="${errorMessage}">
@@ -19,18 +19,51 @@
 
     <form action="/required-staff-patterns" method="post">
         <p>
-            <label for="dayOfWeek">曜日</label><br>
-            <select id="dayOfWeek" name="dayOfWeek" required>
-                <option value="">選択してください</option>
-                <option value="1" th:selected="${dayOfWeek == 1}">月曜日</option>
-                <option value="2" th:selected="${dayOfWeek == 2}">火曜日</option>
-                <option value="3" th:selected="${dayOfWeek == 3}">水曜日</option>
-                <option value="4" th:selected="${dayOfWeek == 4}">木曜日</option>
-                <option value="5" th:selected="${dayOfWeek == 5}">金曜日</option>
-                <option value="6" th:selected="${dayOfWeek == 6}">土曜日</option>
-                <option value="7" th:selected="${dayOfWeek == 7}">日曜日</option>
-            </select>
-        </p>
+            <label>対象曜日</label><br>
+
+        <div class="checkbox-group">
+            <label>
+                <input type="checkbox" name="dayOfWeeks" value="1"
+                       th:checked="${dayOfWeeks != null and #lists.contains(dayOfWeeks, 1)}">
+                月
+            </label>
+
+            <label>
+                <input type="checkbox" name="dayOfWeeks" value="2"
+                       th:checked="${dayOfWeeks != null and #lists.contains(dayOfWeeks, 2)}">
+                火
+            </label>
+
+            <label>
+                <input type="checkbox" name="dayOfWeeks" value="3"
+                       th:checked="${dayOfWeeks != null and #lists.contains(dayOfWeeks, 3)}">
+                水
+            </label>
+
+            <label>
+                <input type="checkbox" name="dayOfWeeks" value="4"
+                       th:checked="${dayOfWeeks != null and #lists.contains(dayOfWeeks, 4)}">
+                木
+            </label>
+
+            <label>
+                <input type="checkbox" name="dayOfWeeks" value="5"
+                       th:checked="${dayOfWeeks != null and #lists.contains(dayOfWeeks, 5)}">
+                金
+            </label>
+
+            <label>
+                <input type="checkbox" name="dayOfWeeks" value="6"
+                       th:checked="${dayOfWeeks != null and #lists.contains(dayOfWeeks, 6)}">
+                土
+            </label>
+
+            <label>
+                <input type="checkbox" name="dayOfWeeks" value="7"
+                       th:checked="${dayOfWeeks != null and #lists.contains(dayOfWeeks, 7)}">
+                日
+            </label>
+        </div>
 
         <p>
             <label for="startTime">開始時刻</label><br>

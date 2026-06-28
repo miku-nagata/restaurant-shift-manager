@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalTime;
+import java.util.Comparator;
 import java.util.List;
 
 @Controller
@@ -22,7 +23,13 @@ public class RequiredStaffPatternController {
 
     @GetMapping("/required-staff-patterns")
     public String list(Model model) {
-        List<RequiredStaffPattern> patterns = requiredStaffPatternRepository.findAll();
+        List<RequiredStaffPattern> patterns = requiredStaffPatternRepository.findAll()
+                .stream()
+                .sorted(Comparator
+                        .comparing(RequiredStaffPattern::getDayOfWeek)
+                        .thenComparing(RequiredStaffPattern::getStartTime))
+                .toList();
+
         model.addAttribute("patterns", patterns);
 
         return "required-staff-patterns/list";
@@ -37,19 +44,19 @@ public class RequiredStaffPatternController {
 
     @PostMapping("/required-staff-patterns")
     public String create(
-            @RequestParam Integer dayOfWeek,
+            @RequestParam(required = false) List<Integer> dayOfWeeks,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime startTime,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime endTime,
             @RequestParam Integer requiredCount,
             Model model
     ) {
-        String errorMessage = validatePattern(null, dayOfWeek, startTime, endTime, requiredCount);
+        String errorMessage = validateSelectedDays(dayOfWeeks, startTime, endTime, requiredCount);
 
         if (errorMessage != null) {
             model.addAttribute("errorMessage", errorMessage);
             model.addAttribute("timeOptions", createTimeOptions());
 
-            model.addAttribute("dayOfWeek", dayOfWeek);
+            model.addAttribute("dayOfWeeks", dayOfWeeks);
             model.addAttribute("selectedStartTime", startTime.toString());
             model.addAttribute("selectedEndTime", endTime.toString());
             model.addAttribute("requiredCount", requiredCount);
@@ -57,8 +64,16 @@ public class RequiredStaffPatternController {
             return "required-staff-patterns/form";
         }
 
-        RequiredStaffPattern pattern = new RequiredStaffPattern(dayOfWeek, startTime, endTime, requiredCount);
-        requiredStaffPatternRepository.save(pattern);
+        for (Integer dayOfWeek : dayOfWeeks) {
+            RequiredStaffPattern pattern = new RequiredStaffPattern(
+                    dayOfWeek,
+                    startTime,
+                    endTime,
+                    requiredCount
+            );
+
+            requiredStaffPatternRepository.save(pattern);
+        }
 
         return "redirect:/required-staff-patterns";
     }
@@ -70,13 +85,12 @@ public class RequiredStaffPatternController {
         return "redirect:/required-staff-patterns";
     }
 
-    private String validatePattern(Long currentPatternId,
-                                   Integer dayOfWeek,
-                                   LocalTime startTime,
-                                   LocalTime endTime,
-                                   Integer requiredCount) {
-        if (dayOfWeek == null || dayOfWeek < 1 || dayOfWeek > 7) {
-            return "曜日を選択してください。";
+    private String validateSelectedDays(List<Integer> dayOfWeeks,
+                                        LocalTime startTime,
+                                        LocalTime endTime,
+                                        Integer requiredCount) {
+        if (dayOfWeeks == null || dayOfWeeks.isEmpty()) {
+            return "曜日を1つ以上選択してください。";
         }
 
         if (!startTime.isBefore(endTime)) {
@@ -85,6 +99,26 @@ public class RequiredStaffPatternController {
 
         if (requiredCount == null || requiredCount < 1) {
             return "必要人数は1人以上で入力してください。";
+        }
+
+        for (Integer dayOfWeek : dayOfWeeks) {
+            String errorMessage = validatePattern(null, dayOfWeek, startTime, endTime, requiredCount);
+
+            if (errorMessage != null) {
+                return getDayOfWeekName(dayOfWeek) + "：" + errorMessage;
+            }
+        }
+
+        return null;
+    }
+
+    private String validatePattern(Long currentPatternId,
+                                   Integer dayOfWeek,
+                                   LocalTime startTime,
+                                   LocalTime endTime,
+                                   Integer requiredCount) {
+        if (dayOfWeek == null || dayOfWeek < 1 || dayOfWeek > 7) {
+            return "曜日を選択してください。";
         }
 
         List<RequiredStaffPattern> patterns = requiredStaffPatternRepository.findAll();
@@ -106,6 +140,19 @@ public class RequiredStaffPatternController {
         }
 
         return null;
+    }
+
+    private String getDayOfWeekName(Integer dayOfWeek) {
+        return switch (dayOfWeek) {
+            case 1 -> "月曜日";
+            case 2 -> "火曜日";
+            case 3 -> "水曜日";
+            case 4 -> "木曜日";
+            case 5 -> "金曜日";
+            case 6 -> "土曜日";
+            case 7 -> "日曜日";
+            default -> "";
+        };
     }
 
     private List<String> createTimeOptions() {
