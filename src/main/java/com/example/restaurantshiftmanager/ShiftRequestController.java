@@ -5,12 +5,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class ShiftRequestController {
@@ -27,9 +27,7 @@ public class ShiftRequestController {
     @GetMapping("/shift-requests")
     public String list(Model model) {
         List<ShiftRequest> shiftRequests = shiftRequestRepository.findAll();
-
         model.addAttribute("shiftRequests", shiftRequests);
-
         return "shift-requests/list";
     }
 
@@ -37,7 +35,6 @@ public class ShiftRequestController {
     public String newForm(Model model) {
         model.addAttribute("employees", employeeRepository.findAll());
         model.addAttribute("timeOptions", createTimeOptions());
-
         return "shift-requests/form";
     }
 
@@ -69,6 +66,53 @@ public class ShiftRequestController {
                 .orElseThrow(() -> new IllegalArgumentException("従業員が見つかりません: " + employeeId));
 
         ShiftRequest shiftRequest = new ShiftRequest(employee, workDate, startTime, endTime, requestType);
+        shiftRequestRepository.save(shiftRequest);
+
+        return "redirect:/shift-requests";
+    }
+
+    @GetMapping("/shift-requests/{id}/edit")
+    public String editForm(@PathVariable Long id, Model model) {
+        ShiftRequest shiftRequest = shiftRequestRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("勤務希望が見つかりません: " + id));
+
+        model.addAttribute("shiftRequest", shiftRequest);
+        model.addAttribute("employees", employeeRepository.findAll());
+        model.addAttribute("timeOptions", createTimeOptions());
+
+        return "shift-requests/edit";
+    }
+
+    @PostMapping("/shift-requests/{id}/edit")
+    public String update(
+            @PathVariable Long id,
+            @RequestParam Long employeeId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate workDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime startTime,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime endTime,
+            @RequestParam String requestType,
+            Model model
+    ) {
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new IllegalArgumentException("従業員が見つかりません: " + employeeId));
+
+        ShiftRequest shiftRequest = shiftRequestRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("勤務希望が見つかりません: " + id));
+
+        shiftRequest.setEmployee(employee);
+        shiftRequest.setWorkDate(workDate);
+        shiftRequest.setStartTime(startTime);
+        shiftRequest.setEndTime(endTime);
+        shiftRequest.setRequestType(requestType);
+
+        if (!startTime.isBefore(endTime)) {
+            model.addAttribute("errorMessage", "開始時刻は終了時刻より前にしてください。");
+            model.addAttribute("shiftRequest", shiftRequest);
+            model.addAttribute("employees", employeeRepository.findAll());
+            model.addAttribute("timeOptions", createTimeOptions());
+
+            return "shift-requests/edit";
+        }
 
         shiftRequestRepository.save(shiftRequest);
 
@@ -78,7 +122,6 @@ public class ShiftRequestController {
     @PostMapping("/shift-requests/{id}/delete")
     public String delete(@PathVariable Long id) {
         shiftRequestRepository.deleteById(id);
-
         return "redirect:/shift-requests";
     }
 
