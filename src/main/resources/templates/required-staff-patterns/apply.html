@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>必要人数パターン反映</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>必要人数パターン反映</h1>
+
+    <p class="page-description">
+        登録済みの曜日パターンを、指定した年月の日付別必要人数へ反映します。
+    </p>
+
+    <p class="error-message" th:if="${errorMessage}" th:text="${errorMessage}">
+        エラーメッセージ
+    </p>
+
+    <p class="success-message" th:if="${successMessage}" th:text="${successMessage}">
+        完了メッセージ
+    </p>
+
+    <form action="/required-staff-patterns/apply" method="post">
+        <p>
+            <label for="year">年</label><br>
+            <input type="number" id="year" name="year" th:value="${year}" required>
+        </p>
+
+        <p>
+            <label for="month">月</label><br>
+            <input type="number" id="month" name="month" th:value="${month}" min="1" max="12" required>
+        </p>
+
+        <button type="submit" onclick="return confirm('指定した年月へ曜日パターンを反映しますか？');">
+            反映する
+        </button>
+    </form>
+
+    <p class="back-link">
+        <a href="/required-staff-patterns">必要人数パターン一覧へ戻る</a>
+    </p>
+
+    <p class="back-link">
+        <a href="/required-staff">日付別必要人数一覧を見る</a>
+    </p>
+
+    <p class="back-link">
+        <a href="/">トップページへ戻る</a>
+    </p>
+</div>
+</body>
+</html>

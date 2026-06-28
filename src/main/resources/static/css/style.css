@@ -338,3 +338,13 @@ input[type="checkbox"] {
     border-radius: 8px;
     cursor: pointer;
 }
+
+.success-message {
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    background-color: #dcfce7;
+    border: 1px solid #86efac;
+    border-radius: 8px;
+    color: #166534;
+    font-weight: 600;
+}
