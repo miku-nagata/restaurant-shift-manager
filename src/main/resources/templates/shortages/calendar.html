@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>不足状況カレンダー</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>不足状況カレンダー</h1>
+
+    <p class="page-description">
+        月ごとの不足状況を確認できます。不足がある日は色付きで表示されます。
+    </p>
+
+    <div class="summary-cards">
+        <div class="summary-card">
+            <div class="summary-label">不足ありの日数</div>
+            <div class="summary-value" th:text="${shortageDayCount} + '日'">0日</div>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-label">最大不足人数</div>
+            <div class="summary-value" th:text="${maxShortageCount} + '人'">0人</div>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-label">未設定の日数</div>
+            <div class="summary-value" th:text="${noSettingDayCount} + '日'">0日</div>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-label">最も注意が必要な日</div>
+            <div class="summary-value"
+                 th:text="${mostDangerousDate != null ? mostDangerousDate : '-'}">-</div>
+        </div>
+    </div>
+
+    <div class="calendar-header">
+        <a class="action-button"
+           th:href="@{/shortages/calendar(year=${previousYear}, month=${previousMonth})}">
+            前月
+        </a>
+
+        <h2 th:text="${targetMonth.year} + '年' + ${targetMonth.monthValue} + '月'">
+            2026年6月
+        </h2>
+
+        <a class="action-button"
+           th:href="@{/shortages/calendar(year=${nextYear}, month=${nextMonth})}">
+            次月
+        </a>
+    </div>
+
+    <div class="calendar-legend">
+        <span><span class="legend-box enough-day"></span>不足なし</span>
+        <span><span class="legend-box shortage-day"></span>不足あり</span>
+        <span><span class="legend-box serious-shortage-day"></span>大きな不足</span>
+        <span><span class="legend-box no-setting-day"></span>未設定</span>
+    </div>
+
+    <table class="calendar-table">
+        <thead>
+        <tr>
+            <th>日</th>
+            <th>月</th>
+            <th>火</th>
+            <th>水</th>
+            <th>木</th>
+            <th>金</th>
+            <th>土</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="week : ${calendarWeeks}">
+            <td th:each="day : ${week}">
+                <div th:if="${day != null}"
+                     class="calendar-day"
+                     th:classappend="${day.statusClass}">
+
+                    <a th:if="${day.hasRequiredStaff}"
+                       th:href="@{/shortages(date=${day.date})}">
+                        <div class="calendar-date" th:text="${day.dayOfMonth}">1</div>
+                        <div class="calendar-status" th:text="${day.statusText}">不足なし</div>
+                        <div class="calendar-sub" th:text="${day.subText}">OK</div>
+                    </a>
+
+                    <div th:if="${!day.hasRequiredStaff}">
+                        <div class="calendar-date" th:text="${day.dayOfMonth}">1</div>
+                        <div class="calendar-status" th:text="${day.statusText}">未設定</div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <p class="back-link">
+        <a href="/shortages">30分単位の詳細一覧を見る</a>
+    </p>
+
+    <p class="back-link">
+        <a href="/">トップページへ戻る</a>
+    </p>
+</div>
+</body>
+</html>
