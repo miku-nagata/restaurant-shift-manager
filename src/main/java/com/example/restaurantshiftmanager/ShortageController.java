@@ -22,13 +22,16 @@ public class ShortageController {
     private final RequiredStaffRepository requiredStaffRepository;
     private final ShiftRequestRepository shiftRequestRepository;
     private final RegularHolidayRepository regularHolidayRepository;
+    private final TemporaryClosureRepository temporaryClosureRepository;
 
     public ShortageController(RequiredStaffRepository requiredStaffRepository,
                               ShiftRequestRepository shiftRequestRepository,
-                              RegularHolidayRepository regularHolidayRepository) {
+                              RegularHolidayRepository regularHolidayRepository,
+                              TemporaryClosureRepository temporaryClosureRepository) {
         this.requiredStaffRepository = requiredStaffRepository;
         this.shiftRequestRepository = shiftRequestRepository;
         this.regularHolidayRepository = regularHolidayRepository;
+        this.temporaryClosureRepository = temporaryClosureRepository;
     }
 
     @GetMapping("/shortages")
@@ -97,16 +100,27 @@ public class ShortageController {
             regularHolidayDayOfWeeks.add(regularHoliday.getDayOfWeek());
         }
 
+        Map<LocalDate, String> temporaryClosureReasons = new HashMap<>();
+        for (TemporaryClosure temporaryClosure : temporaryClosureRepository.findAll()) {
+            LocalDate closureDate = temporaryClosure.getClosureDate();
+
+            if (!closureDate.isBefore(monthStart) && !closureDate.isAfter(monthEnd)) {
+                temporaryClosureReasons.put(closureDate, temporaryClosure.getReason());
+            }
+        }
+
         List<List<ShortageCalendarDay>> calendarWeeks = createCalendarWeeks(
                 targetMonth,
                 rowsByDate,
                 datesWithRequiredStaff,
-                regularHolidayDayOfWeeks
+                regularHolidayDayOfWeeks,
+                temporaryClosureReasons
         );
 
         int shortageDayCount = 0;
         int noSettingDayCount = 0;
         int regularHolidayCount = 0;
+        int temporaryClosureCount = 0;
         int maxShortageCount = 0;
         LocalDate mostDangerousDate = null;
         int mostDangerousSlotCount = 0;
@@ -114,6 +128,11 @@ public class ShortageController {
         for (List<ShortageCalendarDay> week : calendarWeeks) {
             for (ShortageCalendarDay day : week) {
                 if (day == null) {
+                    continue;
+                }
+
+                if (day.isTemporaryClosure()) {
+                    temporaryClosureCount++;
                     continue;
                 }
 
@@ -154,6 +173,7 @@ public class ShortageController {
         model.addAttribute("shortageDayCount", shortageDayCount);
         model.addAttribute("noSettingDayCount", noSettingDayCount);
         model.addAttribute("regularHolidayCount", regularHolidayCount);
+        model.addAttribute("temporaryClosureCount", temporaryClosureCount);
         model.addAttribute("maxShortageCount", maxShortageCount);
         model.addAttribute("mostDangerousDate", mostDangerousDate);
 
@@ -205,7 +225,8 @@ public class ShortageController {
             YearMonth targetMonth,
             Map<LocalDate, List<ShortageRow>> rowsByDate,
             Set<LocalDate> datesWithRequiredStaff,
-            Set<Integer> regularHolidayDayOfWeeks
+            Set<Integer> regularHolidayDayOfWeeks,
+            Map<LocalDate, String> temporaryClosureReasons
     ) {
         List<List<ShortageCalendarDay>> calendarWeeks = new ArrayList<>();
 
@@ -224,6 +245,8 @@ public class ShortageController {
 
             boolean hasRequiredStaff = datesWithRequiredStaff.contains(date);
             boolean regularHoliday = regularHolidayDayOfWeeks.contains(date.getDayOfWeek().getValue());
+            boolean temporaryClosure = temporaryClosureReasons.containsKey(date);
+            String temporaryClosureReason = temporaryClosureReasons.get(date);
 
             int shortageSlotCount = 0;
             int maxShortageCount = 0;
@@ -242,6 +265,8 @@ public class ShortageController {
                     date,
                     hasRequiredStaff,
                     regularHoliday,
+                    temporaryClosure,
+                    temporaryClosureReason,
                     shortageSlotCount,
                     maxShortageCount
             ));

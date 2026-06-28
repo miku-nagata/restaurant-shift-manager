@@ -40,6 +40,11 @@
             <div class="summary-value" th:text="${regularHolidayCount} + '日'">0日</div>
         </div>
 
+        <div class="summary-card">
+            <div class="summary-label">臨時休業の日数</div>
+            <div class="summary-value" th:text="${temporaryClosureCount} + '日'">0日</div>
+        </div>
+
     </div>
 
     <div class="calendar-header">
@@ -64,6 +69,7 @@
         <span><span class="legend-box serious-shortage-day"></span>大きな不足</span>
         <span><span class="legend-box no-setting-day"></span>未設定</span>
         <span><span class="legend-box regular-holiday-day"></span>定休日</span>
+        <span><span class="legend-box temporary-closure-day"></span>臨時休業</span>
     </div>
 
     <table class="calendar-table">
@@ -85,14 +91,14 @@
                      class="calendar-day"
                      th:classappend="${day.statusClass}">
 
-                    <a th:if="${day.hasRequiredStaff and !day.regularHoliday}"
+                    <a th:if="${day.hasRequiredStaff and !day.regularHoliday and !day.temporaryClosure}"
                        th:href="@{/shortages(date=${day.date})}">
                         <div class="calendar-date" th:text="${day.dayOfMonth}">1</div>
                         <div class="calendar-status" th:text="${day.statusText}">不足なし</div>
                         <div class="calendar-sub" th:text="${day.subText}">OK</div>
                     </a>
 
-                    <div th:if="${!day.hasRequiredStaff or day.regularHoliday}">
+                    <div th:if="${!day.hasRequiredStaff or day.regularHoliday or day.temporaryClosure}">
                         <div class="calendar-date" th:text="${day.dayOfMonth}">1</div>
                         <div class="calendar-status" th:text="${day.statusText}">未設定</div>
                         <div class="calendar-sub" th:text="${day.subText}"></div>
