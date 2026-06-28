@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>必要人数パターン一覧</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>必要人数パターン一覧</h1>
+
+    <p class="page-description">
+        曜日ごとの基本的な必要人数パターンを表示します。
+    </p>
+
+    <p>
+        <a href="/required-staff-patterns/new">必要人数パターンを新規登録する</a>
+    </p>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>曜日</th>
+            <th>開始時刻</th>
+            <th>終了時刻</th>
+            <th>必要人数</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="pattern : ${patterns}">
+            <td th:text="${pattern.id}">1</td>
+            <td th:text="${pattern.dayOfWeekName}">月曜日</td>
+            <td th:text="${pattern.startTime}">09:00</td>
+            <td th:text="${pattern.endTime}">11:00</td>
+            <td th:text="${pattern.requiredCount}">3</td>
+            <td>
+                <form th:action="@{/required-staff-patterns/{id}/delete(id=${pattern.id})}" method="post" style="display:inline;">
+                    <button type="submit" class="danger-button" onclick="return confirm('この必要人数パターンを削除しますか？');">
+                        削除
+                    </button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <p class="back-link">
+        <a href="/">トップページへ戻る</a>
+    </p>
+</div>
+</body>
+</html>

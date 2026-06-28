@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>必要人数パターン登録</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>必要人数パターン登録</h1>
+
+    <p class="page-description">
+        曜日ごとの基本的な必要人数を登録します。
+    </p>
+
+    <p class="error-message" th:if="${errorMessage}" th:text="${errorMessage}">
+        エラーメッセージ
+    </p>
+
+    <form action="/required-staff-patterns" method="post">
+        <p>
+            <label for="dayOfWeek">曜日</label><br>
+            <select id="dayOfWeek" name="dayOfWeek" required>
+                <option value="">選択してください</option>
+                <option value="1" th:selected="${dayOfWeek == 1}">月曜日</option>
+                <option value="2" th:selected="${dayOfWeek == 2}">火曜日</option>
+                <option value="3" th:selected="${dayOfWeek == 3}">水曜日</option>
+                <option value="4" th:selected="${dayOfWeek == 4}">木曜日</option>
+                <option value="5" th:selected="${dayOfWeek == 5}">金曜日</option>
+                <option value="6" th:selected="${dayOfWeek == 6}">土曜日</option>
+                <option value="7" th:selected="${dayOfWeek == 7}">日曜日</option>
+            </select>
+        </p>
+
+        <p>
+            <label for="startTime">開始時刻</label><br>
+            <select id="startTime" name="startTime" required>
+                <option value="">選択してください</option>
+                <option th:each="time : ${timeOptions}"
+                        th:value="${time}"
+                        th:text="${time}"
+                        th:selected="${time == selectedStartTime}">
+                    09:00
+                </option>
+            </select>
+        </p>
+
+        <p>
+            <label for="endTime">終了時刻</label><br>
+            <select id="endTime" name="endTime" required>
+                <option value="">選択してください</option>
+                <option th:each="time : ${timeOptions}"
+                        th:value="${time}"
+                        th:text="${time}"
+                        th:selected="${time == selectedEndTime}">
+                    09:30
+                </option>
+            </select>
+        </p>
+
+        <p>
+            <label for="requiredCount">必要人数</label><br>
+            <input type="number" id="requiredCount" name="requiredCount" th:value="${requiredCount}" required>
+        </p>
+
+        <button type="submit">登録する</button>
+    </form>
+
+    <p class="back-link">
+        <a href="/required-staff-patterns">必要人数パターン一覧へ戻る</a>
+    </p>
+</div>
+</body>
+</html>
