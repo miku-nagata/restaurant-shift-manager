@@ -11,6 +11,7 @@
 
     <p class="page-description">
         登録済みの曜日パターンを、指定した年月の日付別必要人数へ反映します。
+        既に同じ日付・重なる時間帯の必要人数がある場合は、上書きせずスキップします。
     </p>
 
     <p class="error-message" th:if="${errorMessage}" th:text="${errorMessage}">
@@ -43,6 +44,10 @@
 
     <p class="back-link">
         <a href="/required-staff">日付別必要人数一覧を見る</a>
+    </p>
+
+    <p class="back-link">
+        <a href="/shortages/calendar">不足状況カレンダーを見る</a>
     </p>
 
     <p class="back-link">
