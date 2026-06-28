@@ -42,6 +42,8 @@
             <td th:text="${pattern.endTime}">11:00</td>
             <td th:text="${pattern.requiredCount}">3</td>
             <td>
+                <a th:href="@{/required-staff-patterns/{id}/edit(id=${pattern.id})}">編集</a>
+
                 <form th:action="@{/required-staff-patterns/{id}/delete(id=${pattern.id})}" method="post" style="display:inline;">
                     <button type="submit" class="danger-button" onclick="return confirm('この必要人数パターンを削除しますか？');">
                         削除

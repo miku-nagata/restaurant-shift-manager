@@ -8,10 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.YearMonth;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -19,12 +16,9 @@ import java.util.List;
 public class RequiredStaffPatternController {
 
     private final RequiredStaffPatternRepository requiredStaffPatternRepository;
-    private final RequiredStaffRepository requiredStaffRepository;
 
-    public RequiredStaffPatternController(RequiredStaffPatternRepository requiredStaffPatternRepository,
-                                          RequiredStaffRepository requiredStaffRepository) {
+    public RequiredStaffPatternController(RequiredStaffPatternRepository requiredStaffPatternRepository) {
         this.requiredStaffPatternRepository = requiredStaffPatternRepository;
-        this.requiredStaffRepository = requiredStaffRepository;
     }
 
     @GetMapping("/required-staff-patterns")
@@ -84,88 +78,47 @@ public class RequiredStaffPatternController {
         return "redirect:/required-staff-patterns";
     }
 
-    @GetMapping("/required-staff-patterns/apply")
-    public String applyForm(Model model) {
-        YearMonth now = YearMonth.now();
+    @GetMapping("/required-staff-patterns/{id}/edit")
+    public String editForm(@PathVariable Long id, Model model) {
+        RequiredStaffPattern pattern = requiredStaffPatternRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("必要人数パターンが見つかりません: " + id));
 
-        model.addAttribute("year", now.getYear());
-        model.addAttribute("month", now.getMonthValue());
+        model.addAttribute("pattern", pattern);
+        model.addAttribute("timeOptions", createTimeOptions());
 
-        return "required-staff-patterns/apply";
+        return "required-staff-patterns/edit";
     }
 
-    @PostMapping("/required-staff-patterns/apply")
-    public String apply(
-            @RequestParam Integer year,
-            @RequestParam Integer month,
+    @PostMapping("/required-staff-patterns/{id}/edit")
+    public String update(
+            @PathVariable Long id,
+            @RequestParam Integer dayOfWeek,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime startTime,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime endTime,
+            @RequestParam Integer requiredCount,
             Model model
     ) {
-        if (year == null || month == null || month < 1 || month > 12) {
-            model.addAttribute("errorMessage", "反映する年月を正しく入力してください。");
-            model.addAttribute("year", year);
-            model.addAttribute("month", month);
-            return "required-staff-patterns/apply";
+        RequiredStaffPattern pattern = requiredStaffPatternRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("必要人数パターンが見つかりません: " + id));
+
+        pattern.setDayOfWeek(dayOfWeek);
+        pattern.setStartTime(startTime);
+        pattern.setEndTime(endTime);
+        pattern.setRequiredCount(requiredCount);
+
+        String errorMessage = validatePattern(id, dayOfWeek, startTime, endTime, requiredCount);
+
+        if (errorMessage != null) {
+            model.addAttribute("errorMessage", errorMessage);
+            model.addAttribute("pattern", pattern);
+            model.addAttribute("timeOptions", createTimeOptions());
+
+            return "required-staff-patterns/edit";
         }
 
-        List<RequiredStaffPattern> patterns = requiredStaffPatternRepository.findAll();
+        requiredStaffPatternRepository.save(pattern);
 
-        if (patterns.isEmpty()) {
-            model.addAttribute("errorMessage", "必要人数パターンが登録されていません。");
-            model.addAttribute("year", year);
-            model.addAttribute("month", month);
-            return "required-staff-patterns/apply";
-        }
-
-        YearMonth targetMonth = YearMonth.of(year, month);
-
-        List<RequiredStaff> existingRequiredStaffList = new ArrayList<>(requiredStaffRepository.findAll());
-
-        int createdCount = 0;
-        int skippedCount = 0;
-
-        for (int day = 1; day <= targetMonth.lengthOfMonth(); day++) {
-            LocalDate date = targetMonth.atDay(day);
-            int dayOfWeek = date.getDayOfWeek().getValue();
-
-            for (RequiredStaffPattern pattern : patterns) {
-                if (!pattern.getDayOfWeek().equals(dayOfWeek)) {
-                    continue;
-                }
-
-                boolean overlaps = existsOverlappingRequiredStaff(
-                        existingRequiredStaffList,
-                        date,
-                        pattern.getStartTime(),
-                        pattern.getEndTime()
-                );
-
-                if (overlaps) {
-                    skippedCount++;
-                    continue;
-                }
-
-                RequiredStaff requiredStaff = new RequiredStaff(
-                        date,
-                        pattern.getStartTime(),
-                        pattern.getEndTime(),
-                        pattern.getRequiredCount()
-                );
-
-                requiredStaffRepository.save(requiredStaff);
-                existingRequiredStaffList.add(requiredStaff);
-
-                createdCount++;
-            }
-        }
-
-        model.addAttribute("successMessage",
-                year + "年" + month + "月へ必要人数パターンを反映しました。"
-                        + " 作成：" + createdCount + "件、スキップ：" + skippedCount + "件");
-
-        model.addAttribute("year", year);
-        model.addAttribute("month", month);
-
-        return "required-staff-patterns/apply";
+        return "redirect:/required-staff-patterns";
     }
 
     @PostMapping("/required-staff-patterns/{id}/delete")
@@ -173,25 +126,6 @@ public class RequiredStaffPatternController {
         requiredStaffPatternRepository.deleteById(id);
 
         return "redirect:/required-staff-patterns";
-    }
-
-    private boolean existsOverlappingRequiredStaff(List<RequiredStaff> requiredStaffList,
-                                                   LocalDate workDate,
-                                                   LocalTime startTime,
-                                                   LocalTime endTime) {
-        for (RequiredStaff existingRequiredStaff : requiredStaffList) {
-            boolean sameDate = existingRequiredStaff.getWorkDate().equals(workDate);
-
-            boolean overlaps =
-                    startTime.isBefore(existingRequiredStaff.getEndTime()) &&
-                            endTime.isAfter(existingRequiredStaff.getStartTime());
-
-            if (sameDate && overlaps) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private String validateSelectedDays(List<Integer> dayOfWeeks,
@@ -228,6 +162,14 @@ public class RequiredStaffPatternController {
                                    Integer requiredCount) {
         if (dayOfWeek == null || dayOfWeek < 1 || dayOfWeek > 7) {
             return "曜日を選択してください。";
+        }
+
+        if (!startTime.isBefore(endTime)) {
+            return "開始時刻は終了時刻より前にしてください。";
+        }
+
+        if (requiredCount == null || requiredCount < 1) {
+            return "必要人数は1人以上で入力してください。";
         }
 
         List<RequiredStaffPattern> patterns = requiredStaffPatternRepository.findAll();
