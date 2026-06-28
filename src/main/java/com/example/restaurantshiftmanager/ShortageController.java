@@ -4,6 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,33 +28,40 @@ public class ShortageController {
         List<ShortageRow> shortageRows = new ArrayList<>();
 
         for (RequiredStaff requiredStaff : requiredStaffList) {
-            int availableCount = 0;
+            LocalTime slotStart = requiredStaff.getStartTime();
 
-            for (ShiftRequest shiftRequest : shiftRequests) {
-                boolean sameDate = shiftRequest.getWorkDate().equals(requiredStaff.getWorkDate());
-                boolean isAvailable = "出勤希望".equals(shiftRequest.getRequestType());
+            while (slotStart.isBefore(requiredStaff.getEndTime())) {
+                LocalTime slotEnd = slotStart.plusMinutes(30);
 
-                boolean coversStartTime = !shiftRequest.getStartTime().isAfter(requiredStaff.getStartTime());
-                boolean coversEndTime = !shiftRequest.getEndTime().isBefore(requiredStaff.getEndTime());
+                int availableCount = 0;
 
-                if (sameDate && isAvailable && coversStartTime && coversEndTime) {
-                    availableCount++;
+                for (ShiftRequest shiftRequest : shiftRequests) {
+                    boolean sameDate = shiftRequest.getWorkDate().equals(requiredStaff.getWorkDate());
+                    boolean isAvailable = "出勤希望".equals(shiftRequest.getRequestType());
+
+                    boolean coversSlotStart = !shiftRequest.getStartTime().isAfter(slotStart);
+                    boolean coversSlotEnd = !shiftRequest.getEndTime().isBefore(slotEnd);
+
+                    if (sameDate && isAvailable && coversSlotStart && coversSlotEnd) {
+                        availableCount++;
+                    }
                 }
+
+                ShortageRow row = new ShortageRow(
+                        requiredStaff.getWorkDate(),
+                        slotStart,
+                        slotEnd,
+                        requiredStaff.getRequiredCount(),
+                        availableCount
+                );
+
+                shortageRows.add(row);
+
+                slotStart = slotEnd;
             }
-
-            ShortageRow row = new ShortageRow(
-                    requiredStaff.getWorkDate(),
-                    requiredStaff.getStartTime(),
-                    requiredStaff.getEndTime(),
-                    requiredStaff.getRequiredCount(),
-                    availableCount
-            );
-
-            shortageRows.add(row);
         }
 
         model.addAttribute("shortageRows", shortageRows);
-
         return "shortages/list";
     }
 }
