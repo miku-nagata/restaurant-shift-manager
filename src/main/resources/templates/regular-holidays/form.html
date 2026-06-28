@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>定休日設定</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>定休日設定</h1>
+
+    <p class="page-description">
+        毎週の定休日を設定します。定休日は不足状況カレンダーで「定休日」として表示されます。
+    </p>
+
+    <p class="success-message" th:if="${successMessage}" th:text="${successMessage}">
+        保存しました。
+    </p>
+
+    <form action="/regular-holidays" method="post">
+        <p>
+            <label>定休日にする曜日</label><br>
+
+        <div class="checkbox-group">
+            <label>
+                <input type="checkbox" name="dayOfWeeks" value="1"
+                       th:checked="${selectedDayOfWeeks != null and #lists.contains(selectedDayOfWeeks, 1)}">
+                月
+            </label>
+
+            <label>
+                <input type="checkbox" name="dayOfWeeks" value="2"
+                       th:checked="${selectedDayOfWeeks != null and #lists.contains(selectedDayOfWeeks, 2)}">
+                火
+            </label>
+
+            <label>
+                <input type="checkbox" name="dayOfWeeks" value="3"
+                       th:checked="${selectedDayOfWeeks != null and #lists.contains(selectedDayOfWeeks, 3)}">
+                水
+            </label>
+
+            <label>
+                <input type="checkbox" name="dayOfWeeks" value="4"
+                       th:checked="${selectedDayOfWeeks != null and #lists.contains(selectedDayOfWeeks, 4)}">
+                木
+            </label>
+
+            <label>
+                <input type="checkbox" name="dayOfWeeks" value="5"
+                       th:checked="${selectedDayOfWeeks != null and #lists.contains(selectedDayOfWeeks, 5)}">
+                金
+            </label>
+
+            <label>
+                <input type="checkbox" name="dayOfWeeks" value="6"
+                       th:checked="${selectedDayOfWeeks != null and #lists.contains(selectedDayOfWeeks, 6)}">
+                土
+            </label>
+
+            <label>
+                <input type="checkbox" name="dayOfWeeks" value="7"
+                       th:checked="${selectedDayOfWeeks != null and #lists.contains(selectedDayOfWeeks, 7)}">
+                日
+            </label>
+        </div>
+        </p>
+
+        <button type="submit">保存する</button>
+    </form>
+
+    <p class="back-link">
+        <a href="/shortages/calendar">不足状況カレンダーを見る</a>
+    </p>
+
+    <p class="back-link">
+        <a href="/">トップページへ戻る</a>
+    </p>
+</div>
+</body>
+</html>

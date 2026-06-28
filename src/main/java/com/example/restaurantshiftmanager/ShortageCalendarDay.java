@@ -6,13 +6,15 @@ public class ShortageCalendarDay {
 
     private LocalDate date;
     private boolean hasRequiredStaff;
+    private boolean regularHoliday;
     private int shortageSlotCount;
     private int maxShortageCount;
 
-    public ShortageCalendarDay(LocalDate date, boolean hasRequiredStaff,
+    public ShortageCalendarDay(LocalDate date, boolean hasRequiredStaff, boolean regularHoliday,
                                int shortageSlotCount, int maxShortageCount) {
         this.date = date;
         this.hasRequiredStaff = hasRequiredStaff;
+        this.regularHoliday = regularHoliday;
         this.shortageSlotCount = shortageSlotCount;
         this.maxShortageCount = maxShortageCount;
     }
@@ -29,6 +31,10 @@ public class ShortageCalendarDay {
         return hasRequiredStaff;
     }
 
+    public boolean isRegularHoliday() {
+        return regularHoliday;
+    }
+
     public int getShortageSlotCount() {
         return shortageSlotCount;
     }
@@ -38,10 +44,14 @@ public class ShortageCalendarDay {
     }
 
     public boolean isShortage() {
-        return shortageSlotCount > 0;
+        return !regularHoliday && shortageSlotCount > 0;
     }
 
     public String getStatusText() {
+        if (regularHoliday) {
+            return "定休日";
+        }
+
         if (!hasRequiredStaff) {
             return "未設定";
         }
@@ -54,6 +64,10 @@ public class ShortageCalendarDay {
     }
 
     public String getSubText() {
+        if (regularHoliday) {
+            return "";
+        }
+
         if (!hasRequiredStaff) {
             return "";
         }
@@ -66,6 +80,10 @@ public class ShortageCalendarDay {
     }
 
     public String getStatusClass() {
+        if (regularHoliday) {
+            return "regular-holiday-day";
+        }
+
         if (!hasRequiredStaff) {
             return "no-setting-day";
         }

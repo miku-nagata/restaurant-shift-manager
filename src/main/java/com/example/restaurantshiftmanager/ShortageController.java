@@ -21,11 +21,14 @@ public class ShortageController {
 
     private final RequiredStaffRepository requiredStaffRepository;
     private final ShiftRequestRepository shiftRequestRepository;
+    private final RegularHolidayRepository regularHolidayRepository;
 
     public ShortageController(RequiredStaffRepository requiredStaffRepository,
-                              ShiftRequestRepository shiftRequestRepository) {
+                              ShiftRequestRepository shiftRequestRepository,
+                              RegularHolidayRepository regularHolidayRepository) {
         this.requiredStaffRepository = requiredStaffRepository;
         this.shiftRequestRepository = shiftRequestRepository;
+        this.regularHolidayRepository = regularHolidayRepository;
     }
 
     @GetMapping("/shortages")
@@ -89,14 +92,21 @@ public class ShortageController {
             datesWithRequiredStaff.add(requiredStaff.getWorkDate());
         }
 
+        Set<Integer> regularHolidayDayOfWeeks = new HashSet<>();
+        for (RegularHoliday regularHoliday : regularHolidayRepository.findAll()) {
+            regularHolidayDayOfWeeks.add(regularHoliday.getDayOfWeek());
+        }
+
         List<List<ShortageCalendarDay>> calendarWeeks = createCalendarWeeks(
                 targetMonth,
                 rowsByDate,
-                datesWithRequiredStaff
+                datesWithRequiredStaff,
+                regularHolidayDayOfWeeks
         );
 
         int shortageDayCount = 0;
         int noSettingDayCount = 0;
+        int regularHolidayCount = 0;
         int maxShortageCount = 0;
         LocalDate mostDangerousDate = null;
         int mostDangerousSlotCount = 0;
@@ -104,6 +114,11 @@ public class ShortageController {
         for (List<ShortageCalendarDay> week : calendarWeeks) {
             for (ShortageCalendarDay day : week) {
                 if (day == null) {
+                    continue;
+                }
+
+                if (day.isRegularHoliday()) {
+                    regularHolidayCount++;
                     continue;
                 }
 
@@ -138,6 +153,7 @@ public class ShortageController {
 
         model.addAttribute("shortageDayCount", shortageDayCount);
         model.addAttribute("noSettingDayCount", noSettingDayCount);
+        model.addAttribute("regularHolidayCount", regularHolidayCount);
         model.addAttribute("maxShortageCount", maxShortageCount);
         model.addAttribute("mostDangerousDate", mostDangerousDate);
 
@@ -188,7 +204,8 @@ public class ShortageController {
     private List<List<ShortageCalendarDay>> createCalendarWeeks(
             YearMonth targetMonth,
             Map<LocalDate, List<ShortageRow>> rowsByDate,
-            Set<LocalDate> datesWithRequiredStaff
+            Set<LocalDate> datesWithRequiredStaff,
+            Set<Integer> regularHolidayDayOfWeeks
     ) {
         List<List<ShortageCalendarDay>> calendarWeeks = new ArrayList<>();
 
@@ -206,6 +223,7 @@ public class ShortageController {
             List<ShortageRow> rows = rowsByDate.getOrDefault(date, new ArrayList<>());
 
             boolean hasRequiredStaff = datesWithRequiredStaff.contains(date);
+            boolean regularHoliday = regularHolidayDayOfWeeks.contains(date.getDayOfWeek().getValue());
 
             int shortageSlotCount = 0;
             int maxShortageCount = 0;
@@ -223,6 +241,7 @@ public class ShortageController {
             week.add(new ShortageCalendarDay(
                     date,
                     hasRequiredStaff,
+                    regularHoliday,
                     shortageSlotCount,
                     maxShortageCount
             ));

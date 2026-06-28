@@ -348,3 +348,8 @@ input[type="checkbox"] {
     color: #166534;
     font-weight: 600;
 }
+
+.regular-holiday-day {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
