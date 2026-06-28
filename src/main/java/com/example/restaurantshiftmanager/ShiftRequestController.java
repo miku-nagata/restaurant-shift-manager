@@ -47,8 +47,24 @@ public class ShiftRequestController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate workDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime startTime,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime endTime,
-            @RequestParam String requestType
+            @RequestParam String requestType,
+            Model model
     ) {
+        if (!startTime.isBefore(endTime)) {
+            model.addAttribute("errorMessage", "開始時刻は終了時刻より前にしてください。");
+
+            model.addAttribute("employees", employeeRepository.findAll());
+            model.addAttribute("timeOptions", createTimeOptions());
+
+            model.addAttribute("selectedEmployeeId", employeeId);
+            model.addAttribute("workDate", workDate);
+            model.addAttribute("selectedStartTime", startTime.toString());
+            model.addAttribute("selectedEndTime", endTime.toString());
+            model.addAttribute("selectedRequestType", requestType);
+
+            return "shift-requests/form";
+        }
+
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new IllegalArgumentException("従業員が見つかりません: " + employeeId));
 

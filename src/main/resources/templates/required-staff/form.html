@@ -8,11 +8,14 @@
 <body>
 <div class="container">
 <h1>必要人数登録</h1>
+    <p class="error-message" th:if="${errorMessage}" th:text="${errorMessage}">
+        エラーメッセージ
+    </p>
 
 <form action="/required-staff" method="post">
     <p>
         <label for="workDate">日付</label><br>
-        <input type="date" id="workDate" name="workDate" required>
+        <input type="date" id="workDate" name="workDate" th:value="${workDate}" required>
     </p>
 
     <p>
@@ -21,7 +24,8 @@
             <option value="">選択してください</option>
             <option th:each="time : ${timeOptions}"
                     th:value="${time}"
-                    th:text="${time}">
+                    th:text="${time}"
+                    th:selected="${time == selectedStartTime}">
                 09:00
             </option>
         </select>
@@ -33,7 +37,8 @@
             <option value="">選択してください</option>
             <option th:each="time : ${timeOptions}"
                     th:value="${time}"
-                    th:text="${time}">
+                    th:text="${time}"
+                    th:selected="${time == selectedEndTime}">
                 09:30
             </option>
         </select>
@@ -41,7 +46,7 @@
 
     <p>
         <label for="requiredCount">必要人数</label><br>
-        <input type="number" id="requiredCount" name="requiredCount" min="0" required>
+        <input type="number" id="requiredCount" name="requiredCount" th:value="${requiredCount}" required>
     </p>
 
     <button type="submit">登録する</button>

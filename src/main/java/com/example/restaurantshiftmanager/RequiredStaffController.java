@@ -42,8 +42,33 @@ public class RequiredStaffController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate workDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime startTime,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime endTime,
-            @RequestParam Integer requiredCount
+            @RequestParam Integer requiredCount,
+            Model model
     ) {
+        if (!startTime.isBefore(endTime)) {
+            model.addAttribute("errorMessage", "開始時刻は終了時刻より前にしてください。");
+            model.addAttribute("timeOptions", createTimeOptions());
+
+            model.addAttribute("workDate", workDate);
+            model.addAttribute("selectedStartTime", startTime.toString());
+            model.addAttribute("selectedEndTime", endTime.toString());
+            model.addAttribute("requiredCount", requiredCount);
+
+            return "required-staff/form";
+        }
+
+        if (requiredCount == null || requiredCount < 1) {
+            model.addAttribute("errorMessage", "必要人数は1人以上で入力してください。");
+            model.addAttribute("timeOptions", createTimeOptions());
+
+            model.addAttribute("workDate", workDate);
+            model.addAttribute("selectedStartTime", startTime.toString());
+            model.addAttribute("selectedEndTime", endTime.toString());
+            model.addAttribute("requiredCount", requiredCount);
+
+            return "required-staff/form";
+        }
+
         RequiredStaff requiredStaff = new RequiredStaff(workDate, startTime, endTime, requiredCount);
 
         requiredStaffRepository.save(requiredStaff);

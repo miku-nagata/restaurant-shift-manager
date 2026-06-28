@@ -8,23 +8,27 @@
 <body>
 <div class="container">
 <h1>勤務希望登録</h1>
+    <p class="error-message" th:if="${errorMessage}" th:text="${errorMessage}">
+        エラーメッセージ
+    </p>
 
 <form action="/shift-requests" method="post">
     <p>
         <label for="employeeId">従業員</label><br>
         <select id="employeeId" name="employeeId" required>
-            <option value="">選択してください</option>
-            <option th:each="employee : ${employees}"
-                    th:value="${employee.id}"
-                    th:text="${employee.name}">
-                山田 太郎
-            </option>
-        </select>
+        <option value="">選択してください</option>
+        <option th:each="employee : ${employees}"
+                th:value="${employee.id}"
+                th:text="${employee.name}"
+                th:selected="${employee.id == selectedEmployeeId}">
+            山田 太郎
+        </option>
+    </select>
     </p>
 
     <p>
         <label for="workDate">日付</label><br>
-        <input type="date" id="workDate" name="workDate" required>
+        <input type="date" id="workDate" name="workDate" th:value="${workDate}" required>
     </p>
 
     <p>
@@ -33,7 +37,8 @@
             <option value="">選択してください</option>
             <option th:each="time : ${timeOptions}"
                     th:value="${time}"
-                    th:text="${time}">
+                    th:text="${time}"
+                    th:selected="${time == selectedStartTime}">
                 09:00
             </option>
         </select>
@@ -45,7 +50,8 @@
             <option value="">選択してください</option>
             <option th:each="time : ${timeOptions}"
                     th:value="${time}"
-                    th:text="${time}">
+                    th:text="${time}"
+                    th:selected="${time == selectedEndTime}">
                 09:30
             </option>
         </select>
@@ -54,8 +60,8 @@
     <p>
         <label for="requestType">希望区分</label><br>
         <select id="requestType" name="requestType" required>
-            <option value="出勤希望">出勤希望</option>
-            <option value="休み希望">休み希望</option>
+            <option value="出勤希望" th:selected="${selectedRequestType == '出勤希望'}">出勤希望</option>
+            <option value="休み希望" th:selected="${selectedRequestType == '休み希望'}">休み希望</option>
         </select>
     </p>
 
