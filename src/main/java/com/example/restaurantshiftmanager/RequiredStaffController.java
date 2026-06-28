@@ -24,16 +24,13 @@ public class RequiredStaffController {
     @GetMapping("/required-staff")
     public String list(Model model) {
         List<RequiredStaff> requiredStaffList = requiredStaffRepository.findAll();
-
         model.addAttribute("requiredStaffList", requiredStaffList);
-
         return "required-staff/list";
     }
 
     @GetMapping("/required-staff/new")
     public String newForm(Model model) {
         model.addAttribute("timeOptions", createTimeOptions());
-
         return "required-staff/form";
     }
 
@@ -70,6 +67,54 @@ public class RequiredStaffController {
         }
 
         RequiredStaff requiredStaff = new RequiredStaff(workDate, startTime, endTime, requiredCount);
+        requiredStaffRepository.save(requiredStaff);
+
+        return "redirect:/required-staff";
+    }
+
+    @GetMapping("/required-staff/{id}/edit")
+    public String editForm(@PathVariable Long id, Model model) {
+        RequiredStaff requiredStaff = requiredStaffRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("必要人数設定が見つかりません: " + id));
+
+        model.addAttribute("requiredStaff", requiredStaff);
+        model.addAttribute("timeOptions", createTimeOptions());
+
+        return "required-staff/edit";
+    }
+
+    @PostMapping("/required-staff/{id}/edit")
+    public String update(
+            @PathVariable Long id,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate workDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime startTime,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime endTime,
+            @RequestParam Integer requiredCount,
+            Model model
+    ) {
+        RequiredStaff requiredStaff = requiredStaffRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("必要人数設定が見つかりません: " + id));
+
+        requiredStaff.setWorkDate(workDate);
+        requiredStaff.setStartTime(startTime);
+        requiredStaff.setEndTime(endTime);
+        requiredStaff.setRequiredCount(requiredCount);
+
+        if (!startTime.isBefore(endTime)) {
+            model.addAttribute("errorMessage", "開始時刻は終了時刻より前にしてください。");
+            model.addAttribute("requiredStaff", requiredStaff);
+            model.addAttribute("timeOptions", createTimeOptions());
+
+            return "required-staff/edit";
+        }
+
+        if (requiredCount == null || requiredCount < 1) {
+            model.addAttribute("errorMessage", "必要人数は1人以上で入力してください。");
+            model.addAttribute("requiredStaff", requiredStaff);
+            model.addAttribute("timeOptions", createTimeOptions());
+
+            return "required-staff/edit";
+        }
 
         requiredStaffRepository.save(requiredStaff);
 
@@ -79,7 +124,6 @@ public class RequiredStaffController {
     @PostMapping("/required-staff/{id}/delete")
     public String delete(@PathVariable Long id) {
         requiredStaffRepository.deleteById(id);
-
         return "redirect:/required-staff";
     }
 

@@ -44,6 +44,8 @@
         <td th:text="${requiredStaff.endTime}">14:00</td>
         <td th:text="${requiredStaff.requiredCount}">5</td>
         <td>
+            <a th:href="@{/required-staff/{id}/edit(id=${requiredStaff.id})}">編集</a>
+
             <form th:action="@{/required-staff/{id}/delete(id=${requiredStaff.id})}" method="post" style="display:inline;">
                 <button type="submit" class="danger-button" onclick="return confirm('この必要人数設定を削除しますか？');">
                     削除
