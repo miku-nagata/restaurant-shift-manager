@@ -3,52 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <title>不足時間確認</title>
-    <style>
-        table {
-            border-collapse: collapse;
-        }
-
-        th, td {
-            border: 1px solid #333;
-            padding: 8px;
-        }
-
-        .shortage {
-            background-color: #ffcccc;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-<h1>不足時間確認</h1>
+<div class="container">
+    <h1>不足時間確認</h1>
 
-<p>必要人数に対して、出勤希望人数が足りているかを確認します。</p>
+    <p class="page-description">
+        必要人数と出勤希望人数を比較し、不足している時間帯を確認します。
+    </p>
 
-<table>
-    <thead>
-    <tr>
-        <th>日付</th>
-        <th>開始時刻</th>
-        <th>終了時刻</th>
-        <th>必要人数</th>
-        <th>出勤希望人数</th>
-        <th>不足人数</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="row : ${shortageRows}"
-        th:classappend="${row.shortage} ? 'shortage'">
-        <td th:text="${row.workDate}">2026-06-27</td>
-        <td th:text="${row.startTime}">09:00</td>
-        <td th:text="${row.endTime}">11:00</td>
-        <td th:text="${row.requiredCount}">3</td>
-        <td th:text="${row.availableCount}">1</td>
-        <td th:text="${row.shortageCount}">2</td>
-    </tr>
-    </tbody>
-</table>
+    <table>
+        <thead>
+        <tr>
+            <th>日付</th>
+            <th>開始時刻</th>
+            <th>終了時刻</th>
+            <th>必要人数</th>
+            <th>出勤希望人数</th>
+            <th>不足人数</th>
+            <th>状態</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="row : ${shortageRows}"
+            th:classappend="${row.shortage} ? 'shortage'">
+            <td th:text="${row.workDate}">2026-06-28</td>
+            <td th:text="${row.startTime}">09:00</td>
+            <td th:text="${row.endTime}">11:00</td>
+            <td th:text="${row.requiredCount}">3</td>
+            <td th:text="${row.availableCount}">2</td>
+            <td th:text="${row.shortageCount}">1</td>
+            <td>
+                <span th:class="${row.shortage} ? 'status-badge shortage-badge' : 'status-badge enough-badge'"
+                      th:text="${row.statusText}">
+                    不足あり
+                </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 
-<p>
-    <a href="/">トップページへ戻る</a>
-</p>
+    <p class="back-link">
+        <a href="/">トップページへ戻る</a>
+    </p>
+</div>
 </body>
 </html>

@@ -155,3 +155,21 @@ button.danger-button {
 button.danger-button:hover {
     background-color: #b91c1c;
 }
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.shortage-badge {
+    background-color: #fecaca;
+    color: #991b1b;
+}
+
+.enough-badge {
+    background-color: #dcfce7;
+    color: #166534;
+}

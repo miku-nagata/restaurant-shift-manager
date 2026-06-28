@@ -19,7 +19,9 @@ public class ShortageRow {
         this.endTime = endTime;
         this.requiredCount = requiredCount;
         this.availableCount = availableCount;
-        this.shortageCount = requiredCount - availableCount;
+
+        int shortage = requiredCount - availableCount;
+        this.shortageCount = Math.max(shortage, 0);
     }
 
     public LocalDate getWorkDate() {
@@ -48,5 +50,13 @@ public class ShortageRow {
 
     public boolean isShortage() {
         return shortageCount > 0;
+    }
+
+    public String getStatusText() {
+        if (isShortage()) {
+            return "不足あり";
+        }
+
+        return "不足なし";
     }
 }
