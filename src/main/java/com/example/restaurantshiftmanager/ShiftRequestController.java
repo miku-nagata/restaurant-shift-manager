@@ -47,8 +47,10 @@ public class ShiftRequestController {
             @RequestParam String requestType,
             Model model
     ) {
-        if (!startTime.isBefore(endTime)) {
-            model.addAttribute("errorMessage", "開始時刻は終了時刻より前にしてください。");
+        String errorMessage = validateShiftRequest(null, employeeId, workDate, startTime, endTime);
+
+        if (errorMessage != null) {
+            model.addAttribute("errorMessage", errorMessage);
 
             model.addAttribute("employees", employeeRepository.findAll());
             model.addAttribute("timeOptions", createTimeOptions());
@@ -105,8 +107,10 @@ public class ShiftRequestController {
         shiftRequest.setEndTime(endTime);
         shiftRequest.setRequestType(requestType);
 
-        if (!startTime.isBefore(endTime)) {
-            model.addAttribute("errorMessage", "開始時刻は終了時刻より前にしてください。");
+        String errorMessage = validateShiftRequest(id, employeeId, workDate, startTime, endTime);
+
+        if (errorMessage != null) {
+            model.addAttribute("errorMessage", errorMessage);
             model.addAttribute("shiftRequest", shiftRequest);
             model.addAttribute("employees", employeeRepository.findAll());
             model.addAttribute("timeOptions", createTimeOptions());
@@ -123,6 +127,37 @@ public class ShiftRequestController {
     public String delete(@PathVariable Long id) {
         shiftRequestRepository.deleteById(id);
         return "redirect:/shift-requests";
+    }
+
+    private String validateShiftRequest(Long currentRequestId,
+                                        Long employeeId,
+                                        LocalDate workDate,
+                                        LocalTime startTime,
+                                        LocalTime endTime) {
+        if (!startTime.isBefore(endTime)) {
+            return "開始時刻は終了時刻より前にしてください。";
+        }
+
+        List<ShiftRequest> shiftRequests = shiftRequestRepository.findAll();
+
+        for (ShiftRequest existingRequest : shiftRequests) {
+            if (currentRequestId != null && existingRequest.getId().equals(currentRequestId)) {
+                continue;
+            }
+
+            boolean sameEmployee = existingRequest.getEmployee().getId().equals(employeeId);
+            boolean sameDate = existingRequest.getWorkDate().equals(workDate);
+
+            boolean overlaps =
+                    startTime.isBefore(existingRequest.getEndTime()) &&
+                            endTime.isAfter(existingRequest.getStartTime());
+
+            if (sameEmployee && sameDate && overlaps) {
+                return "同じ従業員の同じ日付・時間帯に勤務希望が登録されています。";
+            }
+        }
+
+        return null;
     }
 
     private List<String> createTimeOptions() {
