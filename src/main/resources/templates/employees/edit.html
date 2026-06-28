@@ -8,6 +8,9 @@
 <body>
 <div class="container">
 <h1>従業員編集</h1>
+    <p class="error-message" th:if="${errorMessage}" th:text="${errorMessage}">
+        エラーメッセージ
+    </p>
 
 <form th:action="@{/employees/{id}/edit(id=${employee.id})}" th:object="${employee}" method="post">
     <p>
