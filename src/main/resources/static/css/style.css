@@ -357,3 +357,12 @@ input[type="checkbox"] {
     background-color: #ede9fe;
     color: #5b21b6;
 }
+
+.login-container {
+    max-width: 480px;
+}
+
+.logout-form {
+    text-align: right;
+    margin-bottom: 16px;
+}

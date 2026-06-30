@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>ログイン</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="container login-container">
+    <h1>ログイン</h1>
+
+    <p class="page-description">
+        シフト管理システムにログインします。
+    </p>
+
+    <p class="error-message" th:if="${param.error}">
+        ユーザー名またはパスワードが違います。
+    </p>
+
+    <p class="success-message" th:if="${param.logout}">
+        ログアウトしました。
+    </p>
+
+    <form action="/login" method="post">
+        <p>
+            <label for="username">ユーザー名</label><br>
+            <input type="text" id="username" name="username" required>
+        </p>
+
+        <p>
+            <label for="password">パスワード</label><br>
+            <input type="password" id="password" name="password" required>
+        </p>
+
+        <p>
+            <label>
+                <input type="checkbox" onclick="togglePassword()">
+                パスワードを表示する
+            </label>
+        </p>
+
+        <script>
+            function togglePassword() {
+                const passwordInput = document.getElementById("password");
+
+                if (passwordInput.type === "password") {
+                    passwordInput.type = "text";
+                } else {
+                    passwordInput.type = "password";
+                }
+            }
+        </script>
+
+        <button type="submit">ログイン</button>
+    </form>
+
+    <p class="page-description">
+        動作確認用：admin / password
+    </p>
+</div>
+</body>
+</html>
