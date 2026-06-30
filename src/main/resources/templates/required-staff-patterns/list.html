@@ -162,39 +162,6 @@
         </tbody>
     </table>
 
-    <h2>詳細一覧</h2>
-
-    <table>
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>曜日</th>
-            <th>開始時刻</th>
-            <th>終了時刻</th>
-            <th>必要人数</th>
-            <th>操作</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="pattern : ${patterns}">
-            <td th:text="${pattern.id}">1</td>
-            <td th:text="${pattern.dayOfWeekName}">月曜日</td>
-            <td th:text="${pattern.startTime}">09:00</td>
-            <td th:text="${pattern.endTime}">11:00</td>
-            <td th:text="${pattern.requiredCount}">3</td>
-            <td>
-                <a th:href="@{/required-staff-patterns/{id}/edit(id=${pattern.id})}">編集</a>
-
-                <form th:action="@{/required-staff-patterns/{id}/delete(id=${pattern.id})}" method="post" style="display:inline;">
-                    <button type="submit" class="danger-button" onclick="return confirm('この必要人数パターンを削除しますか？');">
-                        削除
-                    </button>
-                </form>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-
     <p class="back-link">
         <a href="/">トップページへ戻る</a>
     </p>
