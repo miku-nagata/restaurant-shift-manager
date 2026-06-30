@@ -36,15 +36,13 @@ public class RequiredStaffPatternController {
     }
 
     @GetMapping("/required-staff-patterns")
-    public String list(Model model) {
-        List<RequiredStaffPattern> patterns = requiredStaffPatternRepository.findAll()
-                .stream()
-                .sorted(Comparator
-                        .comparing(RequiredStaffPattern::getDayOfWeek)
-                        .thenComparing(RequiredStaffPattern::getStartTime))
-                .toList();
+    public String listRequiredStaffPatterns(Model model) {
+        List<RequiredStaffPattern> requiredStaffPatterns = requiredStaffPatternRepository.findAll();
 
-        model.addAttribute("patterns", patterns);
+        List<RequiredStaffPatternMatrixRow> matrixRows = createMatrixRows(requiredStaffPatterns);
+
+        model.addAttribute("requiredStaffPatterns", requiredStaffPatterns);
+        model.addAttribute("matrixRows", matrixRows);
 
         return "required-staff-patterns/list";
     }
@@ -56,37 +54,75 @@ public class RequiredStaffPatternController {
         return "required-staff-patterns/form";
     }
 
+    @GetMapping("/required-staff-patterns/bulk/new")
+    public String newBulkRequiredStaffPatternForm(Model model) {
+        model.addAttribute("timeOptions", createTimeOptions());
+        return "required-staff-patterns/bulk-form";
+    }
+
     @PostMapping("/required-staff-patterns")
-    public String create(
-            @RequestParam(required = false) List<Integer> dayOfWeeks,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime startTime,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime endTime,
-            @RequestParam Integer requiredCount,
-            Model model
-    ) {
-        String errorMessage = validateSelectedDays(dayOfWeeks, startTime, endTime, requiredCount);
+    public String createRequiredStaffPattern(
+            @RequestParam(value = "dayOfWeeks", required = false) List<Integer> dayOfWeeks,
 
-        if (errorMessage != null) {
-            model.addAttribute("errorMessage", errorMessage);
-            model.addAttribute("timeOptions", createTimeOptions());
+            @RequestParam(value = "startTime", required = false) LocalTime startTime,
+            @RequestParam(value = "endTime", required = false) LocalTime endTime,
+            @RequestParam(value = "requiredCount", required = false) Integer requiredCount,
 
-            model.addAttribute("dayOfWeeks", dayOfWeeks);
-            model.addAttribute("selectedStartTime", startTime.toString());
-            model.addAttribute("selectedEndTime", endTime.toString());
-            model.addAttribute("requiredCount", requiredCount);
+            @RequestParam(value = "startTime2", required = false) LocalTime startTime2,
+            @RequestParam(value = "endTime2", required = false) LocalTime endTime2,
+            @RequestParam(value = "requiredCount2", required = false) Integer requiredCount2,
 
-            return "required-staff-patterns/form";
+            @RequestParam(value = "startTime3", required = false) LocalTime startTime3,
+            @RequestParam(value = "endTime3", required = false) LocalTime endTime3,
+            @RequestParam(value = "requiredCount3", required = false) Integer requiredCount3,
+
+            Model model) {
+
+        List<String> errorMessages = new ArrayList<>();
+
+        if (dayOfWeeks == null || dayOfWeeks.isEmpty()) {
+            errorMessages.add("曜日を1つ以上選択してください。");
         }
 
-        for (Integer dayOfWeek : dayOfWeeks) {
-            RequiredStaffPattern pattern = new RequiredStaffPattern(
-                    dayOfWeek,
-                    startTime,
-                    endTime,
-                    requiredCount
-            );
+        int createdCount = 0;
 
-            requiredStaffPatternRepository.save(pattern);
+        createdCount += createPatternsForOneTimeSlot(
+                "時間帯1",
+                dayOfWeeks,
+                startTime,
+                endTime,
+                requiredCount,
+                errorMessages
+        );
+
+        createdCount += createPatternsForOneTimeSlot(
+                "時間帯2",
+                dayOfWeeks,
+                startTime2,
+                endTime2,
+                requiredCount2,
+                errorMessages
+        );
+
+        createdCount += createPatternsForOneTimeSlot(
+                "時間帯3",
+                dayOfWeeks,
+                startTime3,
+                endTime3,
+                requiredCount3,
+                errorMessages
+        );
+
+        if (createdCount == 0 && errorMessages.isEmpty()) {
+            errorMessages.add("登録する時間帯を1つ以上入力してください。");
+        }
+
+        if (!errorMessages.isEmpty()) {
+            model.addAttribute("errorMessages", errorMessages);
+            model.addAttribute("timeOptions", createTimeOptions());
+            model.addAttribute("selectedDayOfWeeks", dayOfWeeks);
+
+            return "required-staff-patterns/form";
         }
 
         return "redirect:/required-staff-patterns";
@@ -375,5 +411,117 @@ public class RequiredStaffPatternController {
                 "21:00", "21:30",
                 "22:00"
         );
+    }
+
+    private List<RequiredStaffPatternMatrixRow> createMatrixRows(List<RequiredStaffPattern> requiredStaffPatterns) {
+        List<RequiredStaffPatternMatrixRow> matrixRows = new ArrayList<>();
+
+        for (RequiredStaffPattern pattern : requiredStaffPatterns) {
+            RequiredStaffPatternMatrixRow matrixRow = findMatrixRow(
+                    matrixRows,
+                    pattern.getStartTime(),
+                    pattern.getEndTime()
+            );
+
+            if (matrixRow == null) {
+                matrixRow = new RequiredStaffPatternMatrixRow(
+                        pattern.getStartTime(),
+                        pattern.getEndTime()
+                );
+
+                matrixRows.add(matrixRow);
+            }
+
+            matrixRow.setPatternByDay(pattern.getDayOfWeek(), pattern);
+        }
+
+        return matrixRows;
+    }
+
+    private RequiredStaffPatternMatrixRow findMatrixRow(
+            List<RequiredStaffPatternMatrixRow> matrixRows,
+            LocalTime startTime,
+            LocalTime endTime) {
+
+        for (RequiredStaffPatternMatrixRow matrixRow : matrixRows) {
+            boolean sameStartTime = matrixRow.getStartTime().equals(startTime);
+            boolean sameEndTime = matrixRow.getEndTime().equals(endTime);
+
+            if (sameStartTime && sameEndTime) {
+                return matrixRow;
+            }
+        }
+
+        return null;
+    }
+
+    private int createPatternsForOneTimeSlot(
+            String timeSlotName,
+            List<Integer> dayOfWeeks,
+            LocalTime startTime,
+            LocalTime endTime,
+            Integer requiredCount,
+            List<String> errorMessages) {
+
+        boolean allEmpty = startTime == null && endTime == null && requiredCount == null;
+
+        if (allEmpty) {
+            return 0;
+        }
+
+        if (dayOfWeeks == null || dayOfWeeks.isEmpty()) {
+            return 0;
+        }
+
+        if (startTime == null || endTime == null || requiredCount == null) {
+            errorMessages.add(timeSlotName + "は、開始時刻・終了時刻・必要人数をすべて入力してください。");
+            return 0;
+        }
+
+        if (!startTime.isBefore(endTime)) {
+            errorMessages.add(timeSlotName + "は、開始時刻を終了時刻より前にしてください。");
+            return 0;
+        }
+
+        if (requiredCount < 1) {
+            errorMessages.add(timeSlotName + "の必要人数は1人以上にしてください。");
+            return 0;
+        }
+
+        int createdCount = 0;
+
+        for (Integer dayOfWeek : dayOfWeeks) {
+            boolean hasOverlap = false;
+
+            List<RequiredStaffPattern> patterns = requiredStaffPatternRepository.findAll();
+
+            for (RequiredStaffPattern pattern : patterns) {
+                boolean sameDayOfWeek = pattern.getDayOfWeek().equals(dayOfWeek);
+
+                boolean overlap = startTime.isBefore(pattern.getEndTime())
+                        && endTime.isAfter(pattern.getStartTime());
+
+                if (sameDayOfWeek && overlap) {
+                    hasOverlap = true;
+                    break;
+                }
+            }
+
+            if (hasOverlap) {
+                errorMessages.add(timeSlotName + "は、" + getDayOfWeekName(dayOfWeek)
+                        + "に重なる時間帯のパターンがすでに登録されています。");
+            } else {
+                RequiredStaffPattern requiredStaffPattern = new RequiredStaffPattern();
+                requiredStaffPattern.setDayOfWeek(dayOfWeek);
+                requiredStaffPattern.setStartTime(startTime);
+                requiredStaffPattern.setEndTime(endTime);
+                requiredStaffPattern.setRequiredCount(requiredCount);
+
+                requiredStaffPatternRepository.save(requiredStaffPattern);
+                createdCount++;
+            }
+        }
+
+        return createdCount;
     }
 }

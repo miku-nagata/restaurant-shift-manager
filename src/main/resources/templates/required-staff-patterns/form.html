@@ -65,36 +65,115 @@
             </label>
         </div>
 
-        <p>
-            <label for="startTime">開始時刻</label><br>
-            <select id="startTime" name="startTime" required>
-                <option value="">選択してください</option>
-                <option th:each="time : ${timeOptions}"
-                        th:value="${time}"
-                        th:text="${time}"
-                        th:selected="${time == selectedStartTime}">
-                    09:00
-                </option>
-            </select>
-        </p>
+        <h2>時間帯</h2>
+
+        <table>
+            <thead>
+            <tr>
+                <th>時間帯</th>
+                <th>開始時刻</th>
+                <th>終了時刻</th>
+                <th>必要人数</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr>
+                <td>時間帯1</td>
+                <td>
+                    <select name="startTime">
+                        <option value="">選択してください</option>
+                        <option th:each="timeOption : ${timeOptions}"
+                                th:value="${timeOption}"
+                                th:text="${timeOption}">
+                        </option>
+                    </select>
+                </td>
+                <td>
+                    <select name="endTime">
+                        <option value="">選択してください</option>
+                        <option th:each="timeOption : ${timeOptions}"
+                                th:value="${timeOption}"
+                                th:text="${timeOption}">
+                        </option>
+                    </select>
+                </td>
+                <td>
+                    <input type="number" name="requiredCount" min="1">
+                </td>
+            </tr>
+
+            <tr id="timeSlot2" style="display: none;">
+                <td>時間帯2</td>
+                <td>
+                    <select name="startTime2">
+                        <option value="">選択してください</option>
+                        <option th:each="timeOption : ${timeOptions}"
+                                th:value="${timeOption}"
+                                th:text="${timeOption}">
+                        </option>
+                    </select>
+                </td>
+                <td>
+                    <select name="endTime2">
+                        <option value="">選択してください</option>
+                        <option th:each="timeOption : ${timeOptions}"
+                                th:value="${timeOption}"
+                                th:text="${timeOption}">
+                        </option>
+                    </select>
+                </td>
+                <td>
+                    <input type="number" name="requiredCount2" min="1">
+                </td>
+            </tr>
+
+            <tr id="timeSlot3" style="display: none;">
+                <td>時間帯3</td>
+                <td>
+                    <select name="startTime3">
+                        <option value="">選択してください</option>
+                        <option th:each="timeOption : ${timeOptions}"
+                                th:value="${timeOption}"
+                                th:text="${timeOption}">
+                        </option>
+                    </select>
+                </td>
+                <td>
+                    <select name="endTime3">
+                        <option value="">選択してください</option>
+                        <option th:each="timeOption : ${timeOptions}"
+                                th:value="${timeOption}"
+                                th:text="${timeOption}">
+                        </option>
+                    </select>
+                </td>
+                <td>
+                    <input type="number" name="requiredCount3" min="1">
+                </td>
+            </tr>
+            </tbody>
+        </table>
 
         <p>
-            <label for="endTime">終了時刻</label><br>
-            <select id="endTime" name="endTime" required>
-                <option value="">選択してください</option>
-                <option th:each="time : ${timeOptions}"
-                        th:value="${time}"
-                        th:text="${time}"
-                        th:selected="${time == selectedEndTime}">
-                    09:30
-                </option>
-            </select>
+            <button type="button" onclick="addTimeSlot()">時間帯を追加する</button>
         </p>
 
-        <p>
-            <label for="requiredCount">必要人数</label><br>
-            <input type="number" id="requiredCount" name="requiredCount" th:value="${requiredCount}" required>
-        </p>
+        <script>
+            let visibleTimeSlotCount = 1;
+
+            function addTimeSlot() {
+                if (visibleTimeSlotCount >= 3) {
+                    alert("追加できる時間帯は3つまでです。");
+                    return;
+                }
+
+                visibleTimeSlotCount++;
+
+                const nextTimeSlot = document.getElementById("timeSlot" + visibleTimeSlotCount);
+                nextTimeSlot.style.display = "table-row";
+            }
+        </script>
 
         <button type="submit">登録する</button>
     </form>

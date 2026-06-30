@@ -23,6 +23,147 @@
         </a>
     </p>
 
+    <h2>曜日・時間帯別の必要人数</h2>
+
+    <table>
+        <thead>
+        <tr>
+            <th>時間帯</th>
+            <th>月</th>
+            <th>火</th>
+            <th>水</th>
+            <th>木</th>
+            <th>金</th>
+            <th>土</th>
+            <th>日</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="row : ${matrixRows}">
+            <td>
+                <span th:text="${row.startTime}"></span>
+                〜
+                <span th:text="${row.endTime}"></span>
+            </td>
+
+            <td>
+                <div th:if="${row.mondayPattern != null}">
+                    <strong th:text="${row.mondayPattern.requiredCount + '人'}"></strong><br>
+                    <a th:href="@{/required-staff-patterns/{id}/edit(id=${row.mondayPattern.id})}">編集</a>
+
+                    <form th:action="@{/required-staff-patterns/{id}/delete(id=${row.mondayPattern.id})}"
+                          method="post"
+                          style="display:inline;"
+                          onsubmit="return confirm('削除しますか？');">
+                        <button type="submit" class="danger-button">削除</button>
+                    </form>
+                </div>
+
+                <span th:if="${row.mondayPattern == null}">-</span>
+            </td>
+
+            <td>
+                <div th:if="${row.tuesdayPattern != null}">
+                    <strong th:text="${row.tuesdayPattern.requiredCount + '人'}"></strong><br>
+                    <a th:href="@{/required-staff-patterns/{id}/edit(id=${row.tuesdayPattern.id})}">編集</a>
+
+                    <form th:action="@{/required-staff-patterns/{id}/delete(id=${row.tuesdayPattern.id})}"
+                          method="post"
+                          style="display:inline;"
+                          onsubmit="return confirm('削除しますか？');">
+                        <button type="submit" class="danger-button">削除</button>
+                    </form>
+                </div>
+
+                <span th:if="${row.tuesdayPattern == null}">-</span>
+            </td>
+
+            <td>
+                <div th:if="${row.wednesdayPattern != null}">
+                    <strong th:text="${row.wednesdayPattern.requiredCount + '人'}"></strong><br>
+                    <a th:href="@{/required-staff-patterns/{id}/edit(id=${row.wednesdayPattern.id})}">編集</a>
+
+                    <form th:action="@{/required-staff-patterns/{id}/delete(id=${row.wednesdayPattern.id})}"
+                          method="post"
+                          style="display:inline;"
+                          onsubmit="return confirm('削除しますか？');">
+                        <button type="submit" class="danger-button">削除</button>
+                    </form>
+                </div>
+
+                <span th:if="${row.wednesdayPattern == null}">-</span>
+            </td>
+
+            <td>
+                <div th:if="${row.thursdayPattern != null}">
+                    <strong th:text="${row.thursdayPattern.requiredCount + '人'}"></strong><br>
+                    <a th:href="@{/required-staff-patterns/{id}/edit(id=${row.thursdayPattern.id})}">編集</a>
+
+                    <form th:action="@{/required-staff-patterns/{id}/delete(id=${row.thursdayPattern.id})}"
+                          method="post"
+                          style="display:inline;"
+                          onsubmit="return confirm('削除しますか？');">
+                        <button type="submit" class="danger-button">削除</button>
+                    </form>
+                </div>
+
+                <span th:if="${row.thursdayPattern == null}">-</span>
+            </td>
+
+            <td>
+                <div th:if="${row.fridayPattern != null}">
+                    <strong th:text="${row.fridayPattern.requiredCount + '人'}"></strong><br>
+                    <a th:href="@{/required-staff-patterns/{id}/edit(id=${row.fridayPattern.id})}">編集</a>
+
+                    <form th:action="@{/required-staff-patterns/{id}/delete(id=${row.fridayPattern.id})}"
+                          method="post"
+                          style="display:inline;"
+                          onsubmit="return confirm('削除しますか？');">
+                        <button type="submit" class="danger-button">削除</button>
+                    </form>
+                </div>
+
+                <span th:if="${row.fridayPattern == null}">-</span>
+            </td>
+
+            <td>
+                <div th:if="${row.saturdayPattern != null}">
+                    <strong th:text="${row.saturdayPattern.requiredCount + '人'}"></strong><br>
+                    <a th:href="@{/required-staff-patterns/{id}/edit(id=${row.saturdayPattern.id})}">編集</a>
+
+                    <form th:action="@{/required-staff-patterns/{id}/delete(id=${row.saturdayPattern.id})}"
+                          method="post"
+                          style="display:inline;"
+                          onsubmit="return confirm('削除しますか？');">
+                        <button type="submit" class="danger-button">削除</button>
+                    </form>
+                </div>
+
+                <span th:if="${row.saturdayPattern == null}">-</span>
+            </td>
+
+            <td>
+                <div th:if="${row.sundayPattern != null}">
+                    <strong th:text="${row.sundayPattern.requiredCount + '人'}"></strong><br>
+                    <a th:href="@{/required-staff-patterns/{id}/edit(id=${row.sundayPattern.id})}">編集</a>
+
+                    <form th:action="@{/required-staff-patterns/{id}/delete(id=${row.sundayPattern.id})}"
+                          method="post"
+                          style="display:inline;"
+                          onsubmit="return confirm('削除しますか？');">
+                        <button type="submit" class="danger-button">削除</button>
+                    </form>
+                </div>
+
+                <span th:if="${row.sundayPattern == null}">-</span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>詳細一覧</h2>
+
     <table>
         <thead>
         <tr>
