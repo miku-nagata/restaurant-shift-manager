@@ -23,13 +23,16 @@ public class RequiredStaffPatternController {
     private final RequiredStaffPatternRepository requiredStaffPatternRepository;
     private final RequiredStaffRepository requiredStaffRepository;
     private final RegularHolidayRepository regularHolidayRepository;
+    private final TemporaryClosureRepository temporaryClosureRepository;
 
     public RequiredStaffPatternController(RequiredStaffPatternRepository requiredStaffPatternRepository,
                                           RequiredStaffRepository requiredStaffRepository,
-                                          RegularHolidayRepository regularHolidayRepository) {
+                                          RegularHolidayRepository regularHolidayRepository,
+                                          TemporaryClosureRepository temporaryClosureRepository) {
         this.requiredStaffPatternRepository = requiredStaffPatternRepository;
         this.requiredStaffRepository = requiredStaffRepository;
         this.regularHolidayRepository = regularHolidayRepository;
+        this.temporaryClosureRepository = temporaryClosureRepository;
     }
 
     @GetMapping("/required-staff-patterns")
@@ -177,9 +180,21 @@ public class RequiredStaffPatternController {
             regularHolidayDayOfWeeks.add(regularHoliday.getDayOfWeek());
         }
 
+        Set<LocalDate> temporaryClosureDates = new HashSet<>();
+
+        for (TemporaryClosure temporaryClosure : temporaryClosureRepository.findAll()) {
+            LocalDate closureDate = temporaryClosure.getClosureDate();
+
+            if (!closureDate.isBefore(targetMonth.atDay(1))
+                    && !closureDate.isAfter(targetMonth.atEndOfMonth())) {
+                temporaryClosureDates.add(closureDate);
+            }
+        }
+
         int createdCount = 0;
         int skippedCount = 0;
         int holidaySkippedCount = 0;
+        int temporaryClosureSkippedCount = 0;
 
         for (int day = 1; day <= targetMonth.lengthOfMonth(); day++) {
             LocalDate date = targetMonth.atDay(day);
@@ -192,6 +207,11 @@ public class RequiredStaffPatternController {
 
                 if (regularHolidayDayOfWeeks.contains(dayOfWeek)) {
                     holidaySkippedCount++;
+                    continue;
+                }
+
+                if (temporaryClosureDates.contains(date)) {
+                    temporaryClosureSkippedCount++;
                     continue;
                 }
 
@@ -225,7 +245,8 @@ public class RequiredStaffPatternController {
                 year + "年" + month + "月へ必要人数パターンを反映しました。"
                         + " 作成：" + createdCount + "件"
                         + "、重複スキップ：" + skippedCount + "件"
-                        + "、定休日スキップ：" + holidaySkippedCount + "件");
+                        + "、定休日スキップ：" + holidaySkippedCount + "件"
+                        + "、臨時休業スキップ：" + temporaryClosureSkippedCount + "件");
 
         model.addAttribute("year", year);
         model.addAttribute("month", month);
