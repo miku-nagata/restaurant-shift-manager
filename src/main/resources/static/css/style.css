@@ -359,7 +359,20 @@ input[type="checkbox"] {
 }
 
 .login-container {
-    max-width: 480px;
+    max-width: 640px;
+}
+
+.login-container input[type="text"],
+.login-container input[type="password"] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    font-size: 18px;
+}
+
+.login-container button {
+    padding: 12px 20px;
+    font-size: 17px;
 }
 
 .logout-form {
