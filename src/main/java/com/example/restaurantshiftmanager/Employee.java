@@ -1,3 +1,5 @@
+// 従業員１人分のデータ型を決める
+
 package com.example.restaurantshiftmanager;
 
 import jakarta.persistence.Entity;
@@ -5,28 +7,32 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+//　従業員情報をデータベースに保存するためのクラス
 @Entity
 public class Employee {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // 自動で被りなしの数字割り振り
     private Long id;
 
     private String name;
 
-    private String employmentType;
+    private String employmentType; // 雇用形態
 
-    private String skillLevel;
+    private String skillLevel; // スキル
 
-    private Integer hourlyWage;
+    private Integer hourlyWage; //時給
 
-    private Integer monthlyHourLimit;
+    private Integer monthlyHourLimit; //月間上限時間
 
-    private Integer monthlyIncomeLimit;
+    private Integer monthlyIncomeLimit; // 月間扶養内限度額
 
+    // コンストラクタ = クラスから新しい物を作るときに最初に呼ばれるメソッド
+    // 空の従業員データを作るためのコンストラクタ
     public Employee() {
     }
 
+    // 名前や雇用形態などを受け取って、従業員データを作るコンストラクタ
     public Employee(String name, String employmentType, String skillLevel,
                     Integer hourlyWage, Integer monthlyHourLimit, Integer monthlyIncomeLimit) {
         this.name = name;
@@ -37,6 +43,7 @@ public class Employee {
         this.monthlyIncomeLimit = monthlyIncomeLimit;
     }
 
+    // 各データを取得する
     public Long getId() {
         return id;
     }
@@ -65,6 +72,7 @@ public class Employee {
         return monthlyIncomeLimit;
     }
 
+    // フォームとかで受け取った値をEmployeeにセットする
     public void setId(Long id) {
         this.id = id;
     }

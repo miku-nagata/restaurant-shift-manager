@@ -1,3 +1,5 @@
+// 臨時休業を保存するためのクラス
+
 package com.example.restaurantshiftmanager;
 
 import jakarta.persistence.Entity;
@@ -21,6 +23,8 @@ public class TemporaryClosure {
     public TemporaryClosure() {
     }
 
+    // コンストラクタ
+    // 日付と理由を受け取って、臨時休業データを作る
     public TemporaryClosure(LocalDate closureDate, String reason) {
         this.closureDate = closureDate;
         this.reason = reason;

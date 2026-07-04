@@ -39,6 +39,8 @@
     </tr>
     </thead>
     <tbody>
+
+    <!-- データの繰り返し -->
     <tr th:each="employee : ${employees}">
         <td th:text="${employee.id}">1</td>
         <td th:text="${employee.name}">山田 太郎</td>

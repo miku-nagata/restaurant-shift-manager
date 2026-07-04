@@ -1,3 +1,5 @@
+// 臨時休業の一覧表示、登録、削除を担当するController
+
 package com.example.restaurantshiftmanager;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -21,6 +23,7 @@ public class TemporaryClosureController {
         this.temporaryClosureRepository = temporaryClosureRepository;
     }
 
+    // 臨時休業日一覧を表示
     @GetMapping("/temporary-closures")
     public String list(Model model) {
         List<TemporaryClosure> temporaryClosures = temporaryClosureRepository.findAll()
@@ -33,11 +36,14 @@ public class TemporaryClosureController {
         return "temporary-closures/list";
     }
 
+
+    // 新規登録フォームを表示
     @GetMapping("/temporary-closures/new")
     public String newForm() {
         return "temporary-closures/form";
     }
 
+    // 入力された休業日を登録
     @PostMapping("/temporary-closures")
     public String create(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate closureDate,
@@ -60,6 +66,7 @@ public class TemporaryClosureController {
         return "redirect:/temporary-closures";
     }
 
+    // 指定した休業日を削除
     @PostMapping("/temporary-closures/{id}/delete")
     public String delete(@PathVariable Long id) {
         temporaryClosureRepository.deleteById(id);
@@ -72,6 +79,7 @@ public class TemporaryClosureController {
             return "日付を入力してください。";
         }
 
+        // データベースから臨時休業を全件取得、日付の古い順に並べ替える
         List<TemporaryClosure> temporaryClosures = temporaryClosureRepository.findAll();
 
         for (TemporaryClosure temporaryClosure : temporaryClosures) {
