@@ -1,52 +1,126 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>飲食店向けシフト管理システム</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-<div class="container">
-    <h1>飲食店向けシフト管理システム</h1>
+<div class="container dashboard-container">
 
-    <form action="/logout" method="post" class="logout-form">
-        <button type="submit">ログアウト</button>
-    </form>
+    <div class="dashboard-header">
+        <div>
+            <h1>シフト管理ダッシュボード</h1>
+            <p class="page-description">
+                今月のシフト状況を確認し、必要な操作へすぐ移動できます。
+            </p>
+        </div>
 
-    <p class="page-description">
-        シフト作成業務を支援するWebアプリケーションです。
-    </p>
+        <form action="/logout" method="post" class="logout-form">
+            <button type="submit">ログアウト</button>
+        </form>
+    </div>
 
-    <ul class="menu-list">
-        <li>
-            <a href="/employees">従業員管理</a>
-            <p>従業員の登録・編集・削除を行います。</p>
-        </li>
-        <li>
-            <a href="/shift-requests">勤務希望提出</a>
-            <p>従業員ごとの出勤希望・休み希望を登録します。</p>
-        </li>
-        <li>
-            <a href="/required-staff">必要人数設定</a>
-            <p>日付・時間帯ごとの必要人数を登録します。</p>
-        </li>
-        <li>
-            <a href="/shortages/calendar">不足状況確認</a>
-            <p>月ごとの不足状況を確認し、不足がある日を詳しく確認します。</p>
-        </li>
-        <li>
-            <a href="/required-staff-patterns">必要人数パターン設定</a>
-            <p>曜日ごとの基本的な必要人数を登録します。</p>
-        </li>
-        <li>
-            <a href="/regular-holidays">定休日設定</a>
-            <p>毎週の定休日を設定します。</p>
-        </li>
-        <li>
-            <a href="/temporary-closures">臨時休業設定</a>
-            <p>特定の日だけ休業する日を登録します。</p>
-        </li>
-    </ul>
+    <section class="quick-actions">
+        <h2>よく使う操作</h2>
+        <div class="action-buttons">
+            <a href="/shift-requests" class="action-button primary">勤務希望を提出する</a>
+            <a href="/shortages/calendar" class="action-button">不足状況を確認する</a>
+            <a href="/required-staff" class="action-button">月別必要人数を確認する</a>
+            <a href="/required-staff-patterns" class="action-button">曜日別必要人数パターン</a>
+        </div>
+    </section>
+
+    <section class="dashboard-summary">
+        <div class="summary-card">
+            <h3>人員不足の日</h3>
+            <p class="summary-number">確認中</p>
+            <p class="summary-text">不足状況確認画面で詳細を確認できます。</p>
+        </div>
+
+        <div class="summary-card">
+            <h3>必要人数設定</h3>
+            <p class="summary-number">確認中</p>
+            <p class="summary-text">月別の必要人数を登録・編集します。</p>
+        </div>
+
+        <div class="summary-card">
+            <h3>休業日</h3>
+            <p class="summary-number">確認中</p>
+            <p class="summary-text">定休日・臨時休業日を確認します。</p>
+        </div>
+    </section>
+
+    <section class="calendar-section">
+        <div class="section-header">
+            <h2 th:text="${yearMonthLabel} + 'のシフト状況'">今月のシフト状況</h2>
+            <div class="month-navigation">
+                <button type="button">前月</button>
+                <span>今月</span>
+                <button type="button">翌月</button>
+            </div>
+        </div>
+
+        <div class="calendar">
+            <div class="calendar-weekday">月</div>
+            <div class="calendar-weekday">火</div>
+            <div class="calendar-weekday">水</div>
+            <div class="calendar-weekday">木</div>
+            <div class="calendar-weekday">金</div>
+            <div class="calendar-weekday">土</div>
+            <div class="calendar-weekday">日</div>
+
+            <div th:each="date : ${calendarDates}"
+                 class="calendar-day"
+                 th:classappend="${date == null} ? ' muted' : ''">
+
+                <div th:if="${date != null}">
+                    <div class="date-number" th:text="${date.dayOfMonth}">1</div>
+                    <div class="day-status status-warning">未作成</div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="calendar-legend">
+            <span><span class="legend-box status-ok"></span>確認済み</span>
+            <span><span class="legend-box status-warning"></span>未作成</span>
+            <span><span class="legend-box status-shortage"></span>不足あり</span>
+            <span><span class="legend-box status-closed"></span>休業日</span>
+        </div>
+    </section>
+
+    <section class="management-menu">
+        <h2>管理メニュー</h2>
+
+        <div class="menu-grid">
+            <a href="/employees" class="menu-card">
+                <h3>従業員管理</h3>
+                <p>従業員の登録・編集・削除を行います。</p>
+            </a>
+
+            <a href="/required-staff-patterns" class="menu-card">
+                <h3>曜日別必要人数パターン</h3>
+                <p>曜日ごとの基本的な必要人数を登録します。</p>
+            </a>
+
+            <a href="/required-staff" class="menu-card">
+                <h3>月別必要人数</h3>
+                <p>日付・時間帯ごとの必要人数を確認・編集します。</p>
+            </a>
+
+            <a href="/regular-holidays" class="menu-card">
+                <h3>定休日設定</h3>
+                <p>毎週の定休日を設定します。</p>
+            </a>
+
+            <a href="/temporary-closures" class="menu-card">
+                <h3>臨時休業設定</h3>
+                <p>特定の日だけ休業する日を登録します。</p>
+            </a>
+        </div>
+    </section>
+
 </div>
 </body>
 </html>
