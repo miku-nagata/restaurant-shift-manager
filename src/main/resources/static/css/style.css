@@ -618,3 +618,207 @@ button.danger-button:hover {
 .dashboard-container .menu-card:hover {
     opacity: 0.85;
 }
+
+/* ==============================
+   作成済みシフト：月間カレンダー
+   ============================== */
+
+/* カレンダー全体の表 */
+.shift-calendar {
+    width: 100%;
+    border-collapse: collapse; /* 隣り合う線を1本にまとめる */
+    table-layout: fixed;
+    background-color: #ffffff;
+}
+
+/* 曜日部分（日・月・火...） */
+.shift-calendar th {
+    padding: 10px;
+    border: 1px solid #ddd;
+    background-color: #f5f7fa;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* 日付が入るマス */
+.shift-calendar td {
+    height: 120px;
+    padding: 6px;
+    border: 1px solid #ddd;
+    vertical-align: top;
+}
+
+/* 日曜日の文字色 */
+.shift-calendar .sunday {
+    color: #d9534f;
+}
+
+/* 土曜日の文字色 */
+.shift-calendar .saturday {
+    color: #337ab7;
+}
+
+/* 月初・月末の空白マス */
+.calendar-empty {
+    background-color: #f3f3f3;
+}
+
+/* 通常の日付マス */
+.calendar-day {
+    background-color: #ffffff;
+}
+
+/* 日付の数字 */
+.calendar-date {
+    margin-bottom: 6px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* シフトがない日の表示 */
+.no-shift {
+    font-size: 0.85rem;
+    color: #aaa;
+}
+
+/* 1人分のシフト表示 */
+.shift-item {
+    margin-bottom: 6px;
+    padding: 6px;
+    border-left: 4px solid #4caf50;
+    border-radius: 4px;
+    background-color: #f1f8f4;
+    font-size: 0.85rem;
+}
+
+/* 従業員名 */
+.employee-name {
+    font-weight: bold;
+    color: #333;
+}
+
+/* 勤務時間 */
+.shift-time {
+    margin-top: 2px;
+    color: #555;
+}
+/* ==============================
+   作成済みシフト：画面の見やすさ調整
+   ============================== */
+
+/* 作成済みシフト画面のメイン部分 */
+main {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+/* カード同士の間隔を少し広げる */
+.card {
+    margin-bottom: 24px;
+}
+
+/* カレンダー全体 */
+.shift-calendar {
+    width: 100%;            /* mainの幅いっぱいに広げる */
+    max-width: 100%;        /* mainからはみ出さないようにする */
+    font-size: 0.9rem;
+}
+
+/* 日付マス */
+.shift-calendar td {
+    height: 95px;
+    padding: 6px;
+}
+
+/* 日付の数字 */
+.calendar-date {
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+}
+
+/* シフトがない日の「シフトなし」は非表示にする */
+.no-shift {
+    display: none;
+}
+
+/* 1人分のシフト表示 */
+.shift-item {
+    padding: 4px 6px;
+    margin-bottom: 4px;
+    font-size: 0.8rem;
+}
+
+    /* 従業員名 */
+
+    .employee-name {
+        white-space: nowrap; /* 名前をなるべく1行で表示する */
+        overflow: hidden; /* はみ出した部分を隠す */
+        text-overflow: ellipsis; /* 長い名前は「...」で省略する */
+    }
+
+    /* 勤務時間 */
+
+    .shift-time {
+        font-size: 0.75rem;
+    }
+
+/* ==============================
+作成済みシフト画面：全体レイアウト調整
+============================== */
+
+/* 作成済みシフト一覧ページだけに効かせるための指定 */
+.shift-assignment-page {
+    background-color: #f5f7fa; /* 画面全体の背景を少し薄いグレーにする */
+}
+
+/* ページ上部のタイトルとナビゲーション */
+.shift-assignment-page header {
+    max-width: 1320px;      /* mainと同じくらいの幅にそろえる */
+    margin: 0 auto;         /* header全体を画面中央に配置する */
+    padding: 24px 24px 12px;/* 上・左右・下に余白を作る */
+}
+
+/* ページタイトル */
+.shift-assignment-page header h1 {
+    margin: 0 0 24px;       /* タイトル下に余白を作る */
+}
+
+/* 上部リンクの並び */
+.shift-assignment-page header nav {
+    display: flex;          /* リンクを横並びにする */
+    gap: 14px;              /* リンク同士の間隔をあける */
+    flex-wrap: wrap;        /* 画面が狭いときは折り返す */
+}
+
+/* メイン部分 */
+.shift-assignment-page main {
+    max-width: 1320px;      /* カレンダーを少し大きめに表示する */
+    margin: 0 auto;         /* 画面中央に配置する */
+    padding: 24px;          /* 画面端との余白を作る */
+}
+
+/* カレンダー全体 */
+.shift-assignment-page .shift-calendar {
+    width: 100%;            /* mainの幅いっぱいに広げる */
+}
+
+/* カレンダーの日付マス */
+.shift-assignment-page .shift-calendar td {
+    height: 125px;          /* 名前が入っても見やすいように少し高くする */
+    padding: 8px;           /* マスの内側の余白を少し広げる */
+}
+
+/* 曜日の行 */
+.shift-assignment-page .shift-calendar th {
+    padding: 12px;          /* 曜日の行も少し余裕を持たせる */
+}
+
+/* 1人分のシフト表示 */
+.shift-assignment-page .shift-item {
+    padding: 5px 7px;       /* シフトカード内の余白 */
+    margin-bottom: 5px;     /* 複数人いるときの間隔 */
+}
+
+
+

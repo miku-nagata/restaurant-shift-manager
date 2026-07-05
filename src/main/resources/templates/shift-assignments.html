@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>作成済みシフト一覧</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="shift-assignment-page">
+<header>
+    <h1>作成済みシフト一覧</h1>
+    <nav>
+        <a th:href="@{/}">トップ</a>
+        <a th:href="@{/employees}">従業員管理</a>
+        <a th:href="@{/shift-requests}">勤務希望</a>
+        <a th:href="@{/required-staff}">必要人数</a>
+        <a th:href="@{/temporary-closures}">臨時休業</a>
+    </nav>
+</header>
+
+<main>
+    <section class="card">
+        <h2 th:text="${year} + '年' + ${month} + '月のシフト結果'">
+            2026年7月のシフト結果
+        </h2>
+
+        <form th:action="@{/shift-assignments}" method="get" class="form-inline">
+            <label>
+                年
+                <input type="number" name="year" th:value="${year}">
+            </label>
+
+            <label>
+                月
+                <input type="number" name="month" min="1" max="12" th:value="${month}">
+            </label>
+
+            <button type="submit">表示</button>
+        </form>
+
+        <form th:action="@{/shift-assignments/create}" method="post" class="form-inline">
+            <input type="hidden" name="year" th:value="${year}">
+            <input type="hidden" name="month" th:value="${month}">
+
+            <button type="submit"
+                    onclick="return confirm('この月のシフトを自動作成します。既存のシフト結果は削除されます。よろしいですか？')">
+                この月のシフトを自動作成
+            </button>
+        </form>
+    </section>
+
+    <section class="card">
+        <h2>月間シフトカレンダー</h2>
+        <p>
+            作成済みシフト件数：
+            <span th:text="${#lists.size(shiftAssignments)}">0</span>
+            件
+        </p>
+
+        <table class="shift-calendar">
+            <thead>
+            <tr>
+                <th class="sunday">日</th>
+                <th>月</th>
+                <th>火</th>
+                <th>水</th>
+                <th>木</th>
+                <th>金</th>
+                <th class="saturday">土</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="week : ${calendarWeeks}">
+                <td th:each="date : ${week}"
+                    th:classappend="${date == null} ? 'calendar-empty' : 'calendar-day'">
+
+                    <div th:if="${date != null}"
+                         th:with="dayShifts=${shiftAssignmentsByDate[date.toString()]}">
+
+                        <div class="calendar-date"
+                             th:text="${date.dayOfMonth}">
+                            1
+                        </div>
+
+                        <div th:if="${dayShifts == null || #lists.isEmpty(dayShifts)}"
+                             class="no-shift">
+                            シフトなし
+                        </div>
+
+                        <div th:if="${dayShifts != null && !#lists.isEmpty(dayShifts)}">
+                            <div th:each="shiftAssignment : ${dayShifts}"
+                                 class="shift-item">
+
+                                <div class="employee-name"
+                                     th:text="${shiftAssignment.employee.name}">
+                                    山田 太郎
+                                </div>
+
+                                <div class="shift-time">
+                                    <span th:text="${#temporals.format(shiftAssignment.startTime, 'HH:mm')}">
+                                        10:00
+                                    </span>
+                                    〜
+                                    <span th:text="${#temporals.format(shiftAssignment.endTime, 'HH:mm')}">
+                                        15:00
+                                    </span>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+
+</body>
+</html>
