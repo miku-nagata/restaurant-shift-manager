@@ -1,3 +1,21 @@
+/* ==============================
+   style.css 目次
+
+   1. 全体共通
+   2. 見出し・文章・リンク
+   3. ナビゲーション・メニュー
+   4. テーブル
+   5. フォーム・ボタン
+   6. メッセージ表示
+   7. バッジ・ステータス表示
+   8. 不足状況カレンダー
+   9. ログイン画面
+   10. トップページ：ダッシュボード
+   ============================== */
+/* ==============================
+   1．全体の共通設定
+   ============================== */
+/* ページ全体 */
 body {
     margin: 0;
     font-family: "Segoe UI", "Meiryo", sans-serif;
@@ -5,6 +23,7 @@ body {
     color: #222;
 }
 
+/* 各ページの白いメイン領域 */
 .container {
     max-width: 1100px;
     margin: 40px auto;
@@ -13,35 +32,46 @@ body {
     border-radius: 12px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
-
+/* ==============================
+   2. 見出し・文章・リンク
+   ============================== */
+/* ページタイトル */
 h1 {
     margin-top: 0;
     margin-bottom: 24px;
     font-size: 32px;
     color: #1f2937;
 }
-
+/* 説明文 */
 p {
     line-height: 1.7;
 }
-
+/*　説明の下の余白と文字色 */
+.page-description {
+    margin-bottom: 20px;
+    color: #4b5563;
+}
+/* リンク */
 a {
     color: #2563eb;
     text-decoration: none;
     font-weight: 600;
 }
-
+/* リンクのホバー時 */
 a:hover {
     text-decoration: underline;
 }
-
+/* ==============================
+   3. ナビゲーション・メニュー
+   ============================== */
+/* 戻るリンクや操作リンク */
 .nav-links {
     display: flex;
     gap: 12px;
     flex-wrap: wrap;
     margin: 24px 0;
 }
-
+/* メニュー一覧の並べ方 */
 .menu-list {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -49,19 +79,31 @@ a:hover {
     padding: 0;
     list-style: none;
 }
-
+/* メニュー１個分の設定 */
 .menu-list li {
     background-color: #eff6ff;
     border: 1px solid #bfdbfe;
     border-radius: 10px;
     padding: 18px;
 }
-
+/* メニュー内のリンク文字設定 */
 .menu-list a {
     display: block;
     font-size: 18px;
 }
-
+/* 戻るリンクの上に余白 */
+.back-link {
+    margin-top: 28px;
+}
+/*ログアウト*/
+.logout-form {
+    text-align: right;
+    margin-bottom: 16px;
+}
+/* ==============================
+   4. テーブル
+   ============================== */
+/* テーブル全体 */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -73,25 +115,27 @@ th {
     background-color: #e5e7eb;
     color: #111827;
 }
-
+/* テーブルの見出し 中身 */
 th, td {
     border: 1px solid #d1d5db;
     padding: 10px 12px;
     text-align: left;
 }
-
+/* 偶数行の背景色を変える */
 tr:nth-child(even) {
     background-color: #f9fafb;
 }
-
+/* 不足しているときの設定 */
 .shortage {
     background-color: #fee2e2 !important;
 }
-
+/* ==============================
+   5. フォーム・ボタン
+   ============================== */
 form p {
     margin-bottom: 18px;
 }
-
+/* 入力欄とプルダウンの設定 */
 input,
 select {
     min-width: 240px;
@@ -99,6 +143,34 @@ select {
     border: 1px solid #cbd5e1;
     border-radius: 6px;
     font-size: 16px;
+}
+
+/* チェックボックスは通常の入力欄より小さく表示 */
+input[type="checkbox"] {
+    min-width: 16px !important;
+    width: 16px;
+    height: 16px;
+    margin: 0 6px 0 0;
+}
+
+/* 複数のチェックボックスを横並びにし、折り返す */
+.checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+/* チェックボックスと文字を1つのまとまりにする */
+.checkbox-group label {
+    display: inline-flex;
+    align-items: center;
+    width: auto;
+    padding: 8px 12px;
+    background-color: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    cursor: pointer;
 }
 
 button {
@@ -114,6 +186,14 @@ button {
 button:hover {
     background-color: #1d4ed8;
 }
+/* 削除ボタンなど */
+button.danger-button {
+    background-color: #dc2626;
+}
+
+button.danger-button:hover {
+    background-color: #b91c1c;
+}
 
 .action-button {
     display: inline-block;
@@ -128,16 +208,10 @@ button:hover {
     background-color: #1d4ed8;
     text-decoration: none;
 }
-
-.back-link {
-    margin-top: 28px;
-}
-
-.page-description {
-    margin-bottom: 20px;
-    color: #4b5563;
-}
-
+/* ==============================
+   6. メッセージ表示
+   ============================== */
+/* エラーがあるときの赤いメッセージ */
 .error-message {
     padding: 12px 16px;
     margin-bottom: 20px;
@@ -147,198 +221,7 @@ button:hover {
     color: #991b1b;
     font-weight: 600;
 }
-
-button.danger-button {
-    background-color: #dc2626;
-}
-
-button.danger-button:hover {
-    background-color: #b91c1c;
-}
-
-.status-badge {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-size: 14px;
-    font-weight: 600;
-}
-
-.shortage-badge {
-    background-color: #fecaca;
-    color: #991b1b;
-}
-
-.enough-badge {
-    background-color: #dcfce7;
-    color: #166534;
-}
-
-.summary-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 16px;
-    margin: 24px 0;
-}
-
-.summary-card {
-    padding: 16px;
-    background-color: #f8fafc;
-    border: 1px solid #cbd5e1;
-    border-radius: 10px;
-}
-
-.summary-label {
-    font-size: 14px;
-    color: #64748b;
-    margin-bottom: 8px;
-}
-
-.summary-value {
-    font-size: 24px;
-    font-weight: 700;
-    color: #1f2937;
-}
-
-.calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 28px 0 16px;
-}
-
-.calendar-header h2 {
-    margin: 0;
-}
-
-.calendar-legend {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-    margin-bottom: 16px;
-}
-
-.legend-box {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    border-radius: 4px;
-    margin-right: 6px;
-    vertical-align: middle;
-}
-
-.calendar-table {
-    table-layout: fixed;
-}
-
-.calendar-table th {
-    text-align: center;
-}
-
-.calendar-table td {
-    height: 110px;
-    vertical-align: top;
-    padding: 6px;
-}
-
-.calendar-day {
-    height: 100%;
-    border-radius: 10px;
-    padding: 8px;
-    box-sizing: border-box;
-}
-
-.calendar-day a {
-    display: block;
-    height: 100%;
-    color: inherit;
-    text-decoration: none;
-}
-
-.calendar-date {
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 8px;
-}
-
-.calendar-status {
-    font-size: 14px;
-    font-weight: 700;
-}
-
-.calendar-sub {
-    font-size: 13px;
-    margin-top: 4px;
-}
-
-.enough-day {
-    background-color: #dcfce7;
-    color: #166534;
-}
-
-.shortage-day {
-    background-color: #fed7aa;
-    color: #9a3412;
-}
-
-.serious-shortage-day {
-    background-color: #fecaca;
-    color: #991b1b;
-}
-
-.no-setting-day {
-    background-color: #e5e7eb;
-    color: #4b5563;
-}
-
-input[type="checkbox"] {
-    min-width: auto;
-    width: auto;
-    margin-right: 6px;
-}
-
-.checkbox-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 8px;
-}
-
-.checkbox-group label {
-    display: inline-flex;
-    align-items: center;
-    padding: 8px 12px;
-    background-color: #f8fafc;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-input[type="checkbox"] {
-    min-width: 16px !important;
-    width: 16px;
-    height: 16px;
-    margin: 0 6px 0 0;
-}
-
-.checkbox-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 8px;
-}
-
-.checkbox-group label {
-    display: inline-flex;
-    align-items: center;
-    width: auto;
-    padding: 8px 12px;
-    background-color: #f8fafc;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
+/* 登録や更新が成功した時の緑のメッセージ */
 .success-message {
     padding: 12px 16px;
     margin-bottom: 20px;
@@ -348,20 +231,165 @@ input[type="checkbox"] {
     color: #166534;
     font-weight: 600;
 }
-
+/* ==============================
+   7. バッジ・ステータス表示
+   ============================== */
+/*　不足ありなどの小さいラベル共通設定 */
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+}
+/* 人数が不足しているとき */
+.shortage-badge {
+    background-color: #fecaca;
+    color: #991b1b;
+}
+/* 必要人数を満たしているとき */
+.enough-badge {
+    background-color: #dcfce7;
+    color: #166534;
+}
+/* ==============================
+   8. 不足状況カレンダー
+   ============================== */
+/* 不足状況の件数などを並べる領域 */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+}
+/* 不足状況集計のカード１つ分 */
+.summary-card {
+    padding: 16px;
+    background-color: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+}
+/* 集計カードの項目名 */
+.summary-label {
+    font-size: 14px;
+    color: #64748b;
+    margin-bottom: 8px;
+}
+/* 集計カードの数値 */
+.summary-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1f2937;
+}
+/* カレンダー上部の年月表示と前月・翌月リンクの並べ方 */
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 28px 0 16px;
+}
+/* カレンダーの見出しの余白 */
+.calendar-header h2 {
+    margin: 0;
+}
+/* カレンダーの色の説明エリア */
+.calendar-legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+/* 左側に表示する小さい四角 */
+.legend-box {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+/* テーブルの列幅固定 */
+.calendar-table {
+    table-layout: fixed;
+}
+/* 曜日の見出し設定　中央 */
+.calendar-table th {
+    text-align: center;
+}
+/* カレンダーの日付マス */
+.calendar-table td {
+    height: 110px;
+    vertical-align: top;
+    padding: 6px;
+}
+/* カレンダー１日分の表示領域 */
+.calendar-day {
+    height: 100%;
+    border-radius: 10px;
+    padding: 8px;
+    box-sizing: border-box;
+}
+/* 日付のマスをクリックできるようにする */
+.calendar-day a {
+    display: block;
+    height: 100%;
+    color: inherit;
+    text-decoration: none;
+}
+/* カレンダー内の日付の数字 */
+.calendar-date {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+/* カレンダー内の状況文字 */
+.calendar-status {
+    font-size: 14px;
+    font-weight: 700;
+}
+/* カレンダー内の補足 */
+.calendar-sub {
+    font-size: 13px;
+    margin-top: 4px;
+}
+/* 必要人数を満たしている日 */
+.enough-day {
+    background-color: #dcfce7;
+    color: #166534;
+}
+/* 少し人数が不足している日 */
+.shortage-day {
+    background-color: #fed7aa;
+    color: #9a3412;
+}
+/* 大きく人数が不足している日 */
+.serious-shortage-day {
+    background-color: #fecaca;
+    color: #991b1b;
+}
+/* 必要人数がまだ設定されていない日 */
+.no-setting-day {
+    background-color: #e5e7eb;
+    color: #4b5563;
+}
+/* 定休日 */
 .regular-holiday-day {
     background-color: #dbeafe;
     color: #1e40af;
 }
+/* 臨時休業 */
 .temporary-closure-day {
     background-color: #ede9fe;
     color: #5b21b6;
 }
-
+/* ==============================
+   9. ログイン画面
+   ============================== */
+/* ログイン画面のメイン領域を少し細くする */
 .login-container {
     max-width: 640px;
 }
-
+/* ログイン画面のユーザー名・パスワードの入力欄 */
 .login-container input[type="text"],
 .login-container input[type="password"] {
     width: 100%;
@@ -369,22 +397,25 @@ input[type="checkbox"] {
     padding: 12px;
     font-size: 18px;
 }
-
+/* ログイン画面のボタン */
 .login-container button {
     padding: 12px 20px;
     font-size: 17px;
 }
 
-.logout-form {
-    text-align: right;
-    margin-bottom: 16px;
-}
+/* ==============================
+   10. トップページ：ダッシュボード
+   ============================== */
 
+/* ダッシュボードページ全体の横幅を指定 */
 .dashboard-container {
     max-width: 1100px;
 }
-
-.dashboard-header {
+/*
+   タイトル部分とログアウトボタンを横並びにする
+   左にタイトル、右にログアウトボタンを置くための設定
+*/
+.dashboard-container .dashboard-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -392,20 +423,23 @@ input[type="checkbox"] {
     margin-bottom: 24px;
 }
 
-.quick-actions,
-.dashboard-summary,
-.calendar-section,
-.management-menu {
+/* 各セクションの上に余白を作る */
+.dashboard-container .quick-actions,
+.dashboard-container .dashboard-summary,
+.dashboard-container .calendar-section,
+.dashboard-container .management-menu {
     margin-top: 28px;
 }
 
-.action-buttons {
+/* クイック操作ボタンを横並びにし、画面幅に応じて折り返す */
+.dashboard-container .action-buttons {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
 }
 
-.action-button {
+/* トップページ用の操作ボタン */
+.dashboard-container .action-button {
     display: inline-block;
     padding: 12px 18px;
     border-radius: 8px;
@@ -415,63 +449,79 @@ input[type="checkbox"] {
     font-weight: bold;
 }
 
-.action-button.primary {
+/* 重要な操作ボタンだけ青色で目立たせる */
+.dashboard-container .action-button.primary {
     background: #2563eb;
     color: white;
 }
 
-.dashboard-summary {
+/* トップページ用ボタンにマウスを乗せたとき */
+.dashboard-container .action-button:hover {
+    opacity: 0.85;
+    text-decoration: none;
+}
+
+/* 集計カードを3列で並べる */
+.dashboard-container .dashboard-summary {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 16px;
 }
 
-.summary-card,
-.menu-card,
-.calendar-section {
+/* 集計カード・メニューカード・カレンダー枠の共通デザイン */
+.dashboard-container .summary-card,
+.dashboard-container .menu-card,
+.dashboard-container .calendar-section {
     background: white;
     border: 1px solid #e5e7eb;
     border-radius: 12px;
     padding: 18px;
 }
 
-.summary-number {
+/* 集計カードの数値 */
+.dashboard-container .summary-number {
     font-size: 24px;
     font-weight: bold;
     margin: 8px 0;
 }
 
-.summary-text {
+/* 集計カードの補足説明 */
+.dashboard-container .summary-text {
     color: #6b7280;
     font-size: 14px;
 }
 
-.section-header {
+/* セクション見出しと操作リンクを横並びにする */
+.dashboard-container .section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.month-navigation {
+/* 月移動リンクと年月表示を横並びにする */
+.dashboard-container .month-navigation {
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
-.calendar {
+/* トップページ用カレンダーを7列で表示 */
+.dashboard-container .calendar {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 8px;
     margin-top: 16px;
 }
 
-.calendar-weekday {
+/* 曜日の見出し */
+.dashboard-container .calendar-weekday {
     text-align: center;
     font-weight: bold;
     color: #374151;
 }
 
-.calendar-day {
+/* カレンダーの日付マス */
+.dashboard-container .calendar-day {
     min-height: 90px;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
@@ -479,43 +529,60 @@ input[type="checkbox"] {
     background: #ffffff;
 }
 
-.calendar-day.muted {
+/* 表示月ではない日付を薄く表示 */
+.dashboard-container .calendar-day.muted {
     background: #f9fafb;
 }
 
-.date-number {
+/* 日付の数字 */
+.dashboard-container .date-number {
     font-weight: bold;
     margin-bottom: 8px;
 }
 
-.day-status {
+/* 日付マス内のステータス表示 */
+.dashboard-container .day-status {
     display: inline-block;
     padding: 4px 8px;
     border-radius: 999px;
     font-size: 12px;
 }
 
-.status-ok {
+/* 必要人数を満たしている日 */
+.dashboard-container .status-ok {
     background: #dcfce7;
     color: #166534;
 }
 
-.status-warning {
+/* 少し人数が不足している日 */
+.dashboard-container .status-warning {
     background: #fef3c7;
     color: #92400e;
 }
 
-.status-shortage {
+/* 人数が不足している日 */
+.dashboard-container .status-shortage {
     background: #fee2e2;
     color: #991b1b;
 }
 
-.status-closed {
+/* 定休日 */
+.dashboard-container .status-closed {
     background: #e0f2fe;
     color: #075985;
 }
 
-.calendar-legend {
+/*
+   臨時休業
+   HomeController側で statusClass に "status-temporary" を入れた日付に適用
+*/
+.dashboard-container .status-temporary {
+    background: #ede9fe;
+    color: #5b21b6;
+}
+
+/* カレンダー下の色の説明エリア */
+.dashboard-container .calendar-legend {
     display: flex;
     flex-wrap: wrap;
     gap: 16px;
@@ -523,7 +590,8 @@ input[type="checkbox"] {
     font-size: 14px;
 }
 
-.legend-box {
+/* 凡例の左側に表示する小さい四角 */
+.dashboard-container .legend-box {
     display: inline-block;
     width: 14px;
     height: 14px;
@@ -532,19 +600,21 @@ input[type="checkbox"] {
     vertical-align: middle;
 }
 
-.menu-grid {
+/* 管理メニューを2列で並べる */
+.dashboard-container .menu-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
 }
 
-.menu-card {
+/* 管理メニューのカード全体をクリックできるようにする */
+.dashboard-container .menu-card {
     display: block;
     text-decoration: none;
     color: inherit;
 }
 
-.menu-card:hover,
-.action-button:hover {
+/* 管理メニューにマウスを乗せたとき */
+.dashboard-container .menu-card:hover {
     opacity: 0.85;
 }
