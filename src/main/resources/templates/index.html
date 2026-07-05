@@ -70,13 +70,18 @@
             <div class="calendar-weekday">土</div>
             <div class="calendar-weekday">日</div>
 
-            <div th:each="date : ${calendarDates}"
+            <div th:each="calendarDay : ${calendarDays}"
                  class="calendar-day"
-                 th:classappend="${date == null} ? ' muted' : ''">
+                 th:classappend="${calendarDay.blank} ? ' muted' : ''">
 
-                <div th:if="${date != null}">
-                    <div class="date-number" th:text="${date.dayOfMonth}">1</div>
-                    <div class="day-status status-warning">未作成</div>
+                <div th:if="${!calendarDay.blank}">
+                    <div class="date-number" th:text="${calendarDay.dayOfMonth}">1</div>
+
+                    <div class="day-status"
+                         th:classappend="${calendarDay.statusClass}"
+                         th:text="${calendarDay.statusLabel}">
+                        未作成
+                    </div>
                 </div>
 
             </div>
