@@ -62,7 +62,28 @@
             次月
         </a>
     </div>
+    <form th:action="@{/shortages/calendar/create}" method="post" class="form-inline">
+        <!--
+            今表示しているカレンダーの年を送る
+            targetMonth は Controller から HTML に渡されている
+        -->
+        <input type="hidden" name="year" th:value="${targetMonth.year}">
 
+        <!--
+            今表示しているカレンダーの月を送る
+            例：7月なら 7 が送られる
+        -->
+        <input type="hidden" name="month" th:value="${targetMonth.monthValue}">
+
+        <!--
+            このボタンを押すと、POSTで /shortages/calendar/create に送信される
+            既存の作成済みシフトは作り直されるため、確認メッセージを出す
+        -->
+        <button type="submit"
+                onclick="return confirm('この月のシフトを自動作成します。既存のシフト結果は削除されます。よろしいですか？')">
+            この月のシフトを自動作成
+        </button>
+    </form>
     <div class="calendar-legend">
         <span><span class="legend-box enough-day"></span>不足なし</span>
         <span><span class="legend-box shortage-day"></span>不足あり</span>

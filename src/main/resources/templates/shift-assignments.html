@@ -72,42 +72,82 @@
             <tbody>
             <tr th:each="week : ${calendarWeeks}">
                 <td th:each="date : ${week}"
-                    th:classappend="${date == null} ? 'calendar-empty' : 'calendar-day'">
+                    class="calendar-cell"
+                    th:classappend="${date == null} ? ' calendar-empty' : ' calendar-day'">
 
                     <div th:if="${date != null}"
-                         th:with="dayShifts=${shiftAssignmentsByDate[date.toString()]}">
+                         th:with="
+                        status=${dayStatusByDate.get(date.toString()) != null ? dayStatusByDate.get(date.toString()) : '未設定'},
+                        slots=${slotStatusesByDate.get(date.toString())}">
 
                         <div class="calendar-date"
                              th:text="${date.dayOfMonth}">
                             1
                         </div>
 
-                        <div th:if="${dayShifts == null || #lists.isEmpty(dayShifts)}"
-                             class="no-shift">
-                            シフトなし
-                        </div>
+                        <details class="day-status-detail">
+                            <summary class="day-status-summary">
 
-                        <div th:if="${dayShifts != null && !#lists.isEmpty(dayShifts)}">
-                            <div th:each="shiftAssignment : ${dayShifts}"
-                                 class="shift-item">
+                            <span th:if="${status == '不足'}"
+                                  class="status-dot status-shortage"></span>
 
-                                <div class="employee-name"
-                                     th:text="${shiftAssignment.employee.name}">
-                                    山田 太郎
+                                <span th:if="${status == 'OK'}"
+                                      class="status-dot status-ok"></span>
+
+                                <span th:if="${status != '不足' and status != 'OK'}"
+                                      class="status-dot status-none"></span>
+
+                                <span class="status-text"
+                                      th:text="${status}">
+                                OK
+                            </span>
+                            </summary>
+
+                            <div class="calendar-popup">
+
+                                <div th:if="${slots == null || #lists.isEmpty(slots)}"
+                                     class="no-required-staff">
+                                    必要人数未設定
                                 </div>
 
-                                <div class="shift-time">
-                                    <span th:text="${#temporals.format(shiftAssignment.startTime, 'HH:mm')}">
-                                        10:00
+                                <div th:each="slot : ${slots}"
+                                     class="slot-status-row">
+
+                                    <div class="slot-status-title">
+                                        <strong th:text="${slot.timeLabel}">
+                                            09:00〜11:00
+                                        </strong>
+                                        <span>
+                                        必要
+                                        <span th:text="${slot.requiredCount}">3</span>
+                                        人
                                     </span>
-                                    〜
-                                    <span th:text="${#temporals.format(shiftAssignment.endTime, 'HH:mm')}">
-                                        15:00
+                                    </div>
+
+                                    <div class="mini-heatmap">
+                                    <span th:each="block : ${slot.blocks}"
+                                          class="mini-block"
+                                          th:classappend="${block.shortage} ? ' block-shortage' : ' block-ok'"
+                                          th:title="${block.label}">
                                     </span>
+                                    </div>
+
+                                    <div th:if="${slot.shortage}"
+                                         class="shortage-label">
+                                        ⚠
+                                        <span th:text="${slot.shortageBlockCount}">1</span>
+                                        コマ不足
+                                    </div>
+
+                                    <div th:unless="${slot.shortage}"
+                                         class="ok-label">
+                                        OK
+                                    </div>
+
                                 </div>
 
                             </div>
-                        </div>
+                        </details>
 
                     </div>
 

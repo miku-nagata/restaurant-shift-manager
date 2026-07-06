@@ -12,6 +12,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.time.LocalTime;
+import java.util.LinkedHashMap;
 
 /**
  * 作成されたシフト結果を画面に表示するためのController
@@ -32,6 +34,7 @@ public class ShiftAssignmentController {
      * ShiftCreationServiceに任せる
      */
     private final ShiftCreationService shiftCreationService;
+    private final RequiredStaffRepository requiredStaffRepository;
 
     /**
      * コンストラクタ
@@ -40,10 +43,12 @@ public class ShiftAssignmentController {
      */
     public ShiftAssignmentController(
             ShiftAssignmentRepository shiftAssignmentRepository,
-            ShiftCreationService shiftCreationService) {
+            ShiftCreationService shiftCreationService,
+            RequiredStaffRepository requiredStaffRepository) {
 
         this.shiftAssignmentRepository = shiftAssignmentRepository;
         this.shiftCreationService = shiftCreationService;
+        this.requiredStaffRepository = requiredStaffRepository;
     }
 
     /**
@@ -54,7 +59,7 @@ public class ShiftAssignmentController {
      * /shift-assignments?year=2026&month=7
      * → 2026年7月のシフト結果を表示
      *
-     * @param year 表示したい年
+     * @param year  表示したい年
      * @param month 表示したい月
      * @param model HTMLにデータを渡すための入れ物
      * @return 表示するHTMLファイル名
@@ -94,6 +99,53 @@ public class ShiftAssignmentController {
                                 .thenComparing(ShiftAssignment::getStartTime)
                 )
                 .toList();
+        // 対象月の必要人数を取得
+        List<RequiredStaff> requiredStaffList =
+                requiredStaffRepository.findByWorkDateBetween(startDate, endDate);
+        System.out.println("カレンダー用 必要人数件数: " + requiredStaffList.size());
+
+        for (RequiredStaff requiredStaff : requiredStaffList) {
+            System.out.println(
+                    "必要人数: "
+                            + requiredStaff.getWorkDate()
+                            + " "
+                            + requiredStaff.getStartTime()
+                            + "〜"
+                            + requiredStaff.getEndTime()
+                            + " "
+                            + requiredStaff.getRequiredCount()
+                            + "人"
+            );
+        }
+
+        /*
+         * カレンダー表示用に、
+         * 日付ごとの時間帯別ステータスを作成する
+         *
+         * 例：
+         * 2026-07-07
+         * → 09:00〜11:00 必要3人 / 不足あり
+         * → 11:00〜15:00 必要5人 / OK
+         */
+        Map<String, List<SlotStatus>> slotStatusesByDate =
+                createSlotStatusesByDate(requiredStaffList, shiftAssignments);
+
+        /*
+         * カレンダーのマスに表示する
+         * 日ごとの大きなステータスを作成する
+         *
+         * 不足が1つでもあれば「不足」
+         * すべて足りていれば「OK」
+         */
+        Map<String, String> dayStatusByDate =
+                createDayStatusByDate(slotStatusesByDate);
+
+        // 確認用：日別ステータスが作れているか表示する
+        System.out.println("日別ステータス件数: " + dayStatusByDate.size());
+
+        for (Map.Entry<String, String> entry : dayStatusByDate.entrySet()) {
+            System.out.println("日別ステータス: " + entry.getKey() + " → " + entry.getValue());
+        }
 
         /*
          * 日付ごとにシフト結果をまとめる
@@ -123,6 +175,13 @@ public class ShiftAssignmentController {
         // カレンダー用の日付データをHTMLに渡す
         model.addAttribute("calendarWeeks", calendarWeeks);
 
+        // 日い付けごとの時間帯詳細
+        model.addAttribute("slotStatusesByDate", slotStatusesByDate);
+
+        // 日付ごとの大まかな状態
+        model.addAttribute("dayStatusByDate", dayStatusByDate);
+
+
         // HTMLで表示するために、年と月もmodelに入れる
         model.addAttribute("year", year);
         model.addAttribute("month", month);
@@ -138,7 +197,7 @@ public class ShiftAssignmentController {
      * → 2026年7月分のシフトを自動作成する
      * → 作成後、2026年7月のシフト一覧画面に戻る
      *
-     * @param year 作成したい年
+     * @param year  作成したい年
      * @param month 作成したい月
      * @return 作成後に移動するURL
      */
@@ -167,7 +226,7 @@ public class ShiftAssignmentController {
      * 1週間を「日・月・火・水・木・金・土」の7日で作成
      *
      * @param startDate 月初の日付
-     * @param endDate 月末の日付
+     * @param endDate   月末の日付
      * @return 週ごとにまとめた日付リスト
      */
     private List<List<LocalDate>> createCalendarWeeks(LocalDate startDate, LocalDate endDate) {
@@ -220,5 +279,290 @@ public class ShiftAssignmentController {
         calendarWeeks.add(week);
 
         return calendarWeeks;
+    }
+    /**
+     * 日付ごとの時間帯別ステータスを作成するメソッド
+     *
+     * RequiredStaffの時間帯ごとに、
+     * 30分単位で「人数が足りているか」を確認する
+     */
+    private Map<String, List<SlotStatus>> createSlotStatusesByDate(
+            List<RequiredStaff> requiredStaffList,
+            List<ShiftAssignment> shiftAssignments) {
+
+        Map<String, List<SlotStatus>> slotStatusesByDate = new LinkedHashMap<>();
+
+        List<RequiredStaff> sortedRequiredStaffList = requiredStaffList
+                .stream()
+                .sorted(
+                        Comparator
+                                .comparing(RequiredStaff::getWorkDate)
+                                .thenComparing(RequiredStaff::getStartTime)
+                )
+                .toList();
+
+        for (RequiredStaff requiredStaff : sortedRequiredStaffList) {
+
+            // 必要人数が未入力、または0以下の場合は表示対象にしない
+            if (requiredStaff.getRequiredCount() == null || requiredStaff.getRequiredCount() <= 0) {
+                continue;
+            }
+
+            // この必要人数データに対して、30分ごとの状態を作る
+            List<BlockStatus> blockStatuses =
+                    createBlockStatuses(requiredStaff, shiftAssignments);
+
+            SlotStatus slotStatus = new SlotStatus(
+                    requiredStaff.getStartTime(),
+                    requiredStaff.getEndTime(),
+                    requiredStaff.getRequiredCount(),
+                    blockStatuses
+            );
+
+            String dateKey = requiredStaff.getWorkDate().toString();
+
+            slotStatusesByDate
+                    .computeIfAbsent(dateKey, key -> new ArrayList<>())
+                    .add(slotStatus);
+        }
+
+        return slotStatusesByDate;
+    }
+
+    /**
+     * 日付ごとの大きなステータスを作成するメソッド
+     *
+     * 1つでも不足している時間帯があれば「不足」
+     * すべて足りていれば「OK」
+     */
+    private Map<String, String> createDayStatusByDate(
+            Map<String, List<SlotStatus>> slotStatusesByDate) {
+
+        Map<String, String> dayStatusByDate = new LinkedHashMap<>();
+
+        for (Map.Entry<String, List<SlotStatus>> entry : slotStatusesByDate.entrySet()) {
+
+            boolean hasShortage = entry.getValue()
+                    .stream()
+                    .anyMatch(SlotStatus::isShortage);
+
+            if (hasShortage) {
+                dayStatusByDate.put(entry.getKey(), "不足");
+            } else {
+                dayStatusByDate.put(entry.getKey(), "OK");
+            }
+        }
+
+        return dayStatusByDate;
+    }
+
+    /**
+     * 1つの必要人数データを、30分単位に分けて確認するメソッド
+     *
+     * 例：
+     * 必要時間：09:00〜11:00
+     * → 09:00〜09:30
+     * → 09:30〜10:00
+     * → 10:00〜10:30
+     * → 10:30〜11:00
+     */
+    private List<BlockStatus> createBlockStatuses(
+            RequiredStaff requiredStaff,
+            List<ShiftAssignment> shiftAssignments) {
+
+        List<BlockStatus> blockStatuses = new ArrayList<>();
+
+        LocalTime currentTime = requiredStaff.getStartTime();
+
+        while (currentTime.isBefore(requiredStaff.getEndTime())) {
+
+            LocalTime blockStartTime = currentTime;
+            LocalTime blockEndTime = currentTime.plusMinutes(30);
+
+            // 必要時間の終了時刻を超えないようにする
+            if (blockEndTime.isAfter(requiredStaff.getEndTime())) {
+                blockEndTime = requiredStaff.getEndTime();
+            }
+
+            int assignedCount = countAssignmentsCoveringBlock(
+                    requiredStaff,
+                    shiftAssignments,
+                    blockStartTime,
+                    blockEndTime
+            );
+
+            BlockStatus blockStatus = new BlockStatus(
+                    blockStartTime,
+                    blockEndTime,
+                    requiredStaff.getRequiredCount(),
+                    assignedCount
+            );
+
+            blockStatuses.add(blockStatus);
+
+            currentTime = blockEndTime;
+        }
+
+        return blockStatuses;
+    }
+
+    /**
+     * 指定した30分枠をカバーしているシフト人数を数えるメソッド
+     *
+     * 例：
+     * 確認したい枠：10:00〜10:30
+     * シフト：09:00〜17:00
+     * → カバーしているので人数に含める
+     *
+     * シフト：10:00〜10:15
+     * → 10:00〜10:30を最後までカバーしていないので含めない
+     */
+    private int countAssignmentsCoveringBlock(
+            RequiredStaff requiredStaff,
+            List<ShiftAssignment> shiftAssignments,
+            LocalTime blockStartTime,
+            LocalTime blockEndTime) {
+
+        return (int) shiftAssignments
+                .stream()
+                .filter(shiftAssignment -> shiftAssignment.getWorkDate().equals(requiredStaff.getWorkDate()))
+                .filter(shiftAssignment -> !shiftAssignment.getStartTime().isAfter(blockStartTime))
+                .filter(shiftAssignment -> !shiftAssignment.getEndTime().isBefore(blockEndTime))
+                .count();
+    }
+
+    /**
+     * 必要人数の1時間帯分の状態を表すクラス
+     *
+     * 例：
+     * 09:00〜11:00 必要3人
+     * その中の30分ごとの状態を blocks に持つ
+     */
+    public static class SlotStatus {
+
+        private final LocalTime startTime;
+
+        private final LocalTime endTime;
+
+        private final Integer requiredCount;
+
+        private final List<BlockStatus> blocks;
+
+        public SlotStatus(
+                LocalTime startTime,
+                LocalTime endTime,
+                Integer requiredCount,
+                List<BlockStatus> blocks) {
+
+            this.startTime = startTime;
+            this.endTime = endTime;
+            this.requiredCount = requiredCount;
+            this.blocks = blocks;
+        }
+
+        public LocalTime getStartTime() {
+            return startTime;
+        }
+
+        public LocalTime getEndTime() {
+            return endTime;
+        }
+
+        public Integer getRequiredCount() {
+            return requiredCount;
+        }
+
+        public List<BlockStatus> getBlocks() {
+            return blocks;
+        }
+
+        public String getTimeLabel() {
+            return startTime + "〜" + endTime;
+        }
+
+        public boolean isShortage() {
+            return blocks
+                    .stream()
+                    .anyMatch(BlockStatus::isShortage);
+        }
+
+        public long getShortageBlockCount() {
+            return blocks
+                    .stream()
+                    .filter(BlockStatus::isShortage)
+                    .count();
+        }
+    }
+
+    /**
+     * 30分ごとの状態を表すクラス
+     *
+     * 例：
+     * 09:00〜09:30
+     * 必要3人
+     * 割当2人
+     * → 不足あり
+     */
+    public static class BlockStatus {
+
+        private final LocalTime startTime;
+
+        private final LocalTime endTime;
+
+        private final Integer requiredCount;
+
+        private final Integer assignedCount;
+
+        public BlockStatus(
+                LocalTime startTime,
+                LocalTime endTime,
+                Integer requiredCount,
+                Integer assignedCount) {
+
+            this.startTime = startTime;
+            this.endTime = endTime;
+            this.requiredCount = requiredCount;
+            this.assignedCount = assignedCount;
+        }
+
+        public LocalTime getStartTime() {
+            return startTime;
+        }
+
+        public LocalTime getEndTime() {
+            return endTime;
+        }
+
+        public Integer getRequiredCount() {
+            return requiredCount;
+        }
+
+        public Integer getAssignedCount() {
+            return assignedCount;
+        }
+
+        public boolean isShortage() {
+            return assignedCount < requiredCount;
+        }
+
+        public Integer getShortageCount() {
+            int shortageCount = requiredCount - assignedCount;
+
+            if (shortageCount < 0) {
+                return 0;
+            }
+
+            return shortageCount;
+        }
+
+        public String getLabel() {
+            if (isShortage()) {
+                return startTime + "〜" + endTime
+                        + " 必要" + requiredCount + "人 / 割当" + assignedCount + "人 / 不足" + getShortageCount() + "人";
+            }
+
+            return startTime + "〜" + endTime
+                    + " 必要" + requiredCount + "人 / 割当" + assignedCount + "人 / OK";
+        }
     }
 }

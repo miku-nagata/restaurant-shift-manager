@@ -820,5 +820,173 @@ main {
     margin-bottom: 5px;     /* 複数人いるときの間隔 */
 }
 
+/* ==============================
+   シフト状況カレンダー：ステータス表示
+   ============================== */
+
+/* カレンダーの1日分のマス */
+.calendar-cell {
+    /* 詳細ポップアップをこのマスを基準に表示するため */
+    position: relative;
+    vertical-align: top;
+    /* マスの最低限の高さを確保する */
+    min-height: 90px;
+    /* ポップアップがマスの外にはみ出しても表示できるようにする */
+    overflow: visible;
+}
+
+/* 日付の数字部分 */
+.calendar-date {
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+/* detailsタグ全体 */
+/* OK / 不足 の表示と、開いたときの詳細をまとめる */
+.day-status-detail {
+    /* 詳細ポップアップの位置を調整しやすくする */
+    position: relative;
+}
+
+/* クリック・タップする部分 */
+/* 「● OK」「● 不足」と表示されるところ */
+.day-status-summary {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    /* クリックできることが分かるようにする */
+    cursor: pointer;
+
+    /* details標準の三角マークを消す */
+    list-style: none;
+    font-size: 0.85rem;
+}
+
+/* ChromeやEdgeなどで表示されるdetails標準の三角マークを消す */
+.day-status-summary::-webkit-details-marker {
+    display: none;
+}
+
+/* ステータスの丸印共通 */
+.status-dot {
+    /* 丸印をインライン要素として表示する */
+    display: inline-block;
+    width: 13px;
+    height: 13px;
+    /* 正円にする */
+    border-radius: 50%;
+}
+
+/* OKの日の丸印 */
+.status-ok {
+    background-color: #2ecc71;
+}
+
+/* 不足がある日の丸印 */
+.status-shortage {
+    background-color: #e74c3c;
+}
+
+/* 必要人数が未設定の日の丸印 */
+.status-none {
+    background-color: #bdbdbd;
+}
+
+/* OK / 不足 / 未設定 の文字 */
+.status-text {
+    font-weight: bold;
+}
+
+/* クリック・タップで開く詳細表示 */
+.calendar-popup {
+    /* カレンダーのマスの上に重ねて表示する */
+    position: absolute;
+    /* ステータス表示の少し下に出す */
+    top: 26px;
+    left: 0;
+    /* 他の要素より手前に表示する */
+    z-index: 20;
+    width: 280px;
+    padding: 10px;
+    background-color: #ffffff;
+    border: 1px solid #dddddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    font-size: 0.85rem;
+}
+
+/* 詳細内の1つの時間帯 */
+/* 例：09:00〜11:00 必要3人 */
+.slot-status-row {
+    padding: 8px 0;
+    border-bottom: 1px solid #eeeeee;
+}
+
+/* 最後の時間帯だけ区切り線を消す */
+.slot-status-row:last-child {
+    border-bottom: none;
+}
+
+/* 時間帯と必要人数を表示する行 */
+.slot-status-title {
+    margin-bottom: 5px;
+}
+
+/* 30分ごとの状態を並べる部分 */
+.mini-heatmap {
+    display: flex;
+    gap: 4px;
+    margin: 4px 0;
+}
+
+/* 30分ごとの小さい四角 */
+.mini-block {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+}
+
+/* その30分枠が足りている場合 */
+.block-ok {
+    background-color: #2ecc71;
+}
+
+/* その30分枠が不足している場合 */
+.block-shortage {
+    background-color: #e74c3c;
+}
+
+/* 不足コマ数の表示 */
+.shortage-label {
+    color: #c0392b;
+    font-weight: bold;
+}
+
+/* OK表示 */
+.ok-label {
+    color: #2e7d32;
+    font-weight: bold;
+}
+
+/* 必要人数が設定されていない日の表示 */
+.no-required-staff {
+    /* 補足情報なので少し薄い色にする */
+    color: #777777;
+}
+
+/* スマホ表示用 */
+/* スマホではポップアップを重ねると見づらいため、
+   カレンダーのマスの中に自然に開くようにする */
+@media (max-width: 768px) {
+    .calendar-popup {
+        /* absoluteを解除して、通常の要素として表示する */
+        position: static;
+        width: auto;
+        margin-top: 8px;
+        box-shadow: none;
+    }
+}
 
 
