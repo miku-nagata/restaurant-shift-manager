@@ -22,10 +22,18 @@
     </div>
 
     <section class="quick-actions">
-        <h2>よく使う操作</h2>
+        <h2>従業員向けの操作</h2>
         <div class="action-buttons">
             <a href="/shift-requests" class="action-button primary">勤務希望を提出する</a>
-            <a href="/shortages/calendar" class="action-button">不足状況を確認する</a>
+            <a href="/my-shifts" class="action-button">自分のシフトを見る</a>
+            <a href="/all-shifts" class="action-button">みんなのシフトを見る</a>
+        </div>
+    </section>
+
+    <section class="quick-actions">
+        <h2>管理者向けの操作</h2>
+        <div class="action-buttons">
+            <a href="/shortages/calendar" class="action-button primary">不足状況を確認する</a>
             <a href="/required-staff-patterns" class="action-button">曜日別必要人数パターン</a>
             <a href="/temporary-closures" class="action-button">臨時休業を設定する</a>
         </div>
@@ -96,12 +104,38 @@
     </section>
 
     <section class="management-menu">
+        <h2>従業員メニュー</h2>
+
+        <div class="menu-grid">
+            <a href="/shift-requests" class="menu-card">
+                <h3>勤務希望登録</h3>
+                <p>出勤できる日や時間帯の希望を登録します。</p>
+            </a>
+
+            <a href="/my-shifts" class="menu-card">
+                <h3>自分のシフト</h3>
+                <p>自分の出勤予定をカレンダー形式で確認します。</p>
+            </a>
+
+            <a href="/all-shifts" class="menu-card">
+                <h3>みんなのシフト</h3>
+                <p>全体のシフト表を確認します。</p>
+            </a>
+        </div>
+    </section>
+
+    <section class="management-menu">
         <h2>管理メニュー</h2>
 
         <div class="menu-grid">
             <a href="/employees" class="menu-card">
                 <h3>従業員管理</h3>
                 <p>従業員の登録・編集・削除を行います。</p>
+            </a>
+
+            <a href="/shortages/calendar" class="menu-card">
+                <h3>不足状況カレンダー</h3>
+                <p>必要人数に対して人員が足りているか確認します。</p>
             </a>
 
             <a href="/required-staff-patterns" class="menu-card">

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>自分のシフト</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="container my-shift-container">
+
+    <div class="page-header">
+        <div>
+            <h1>自分のシフト</h1>
+            <p class="page-description">
+                自分の出勤予定をカレンダーで確認できます。
+            </p>
+        </div>
+
+        <a href="/" class="back-link">トップへ戻る</a>
+    </div>
+
+    <section class="my-shift-summary">
+        <div class="summary-card">
+            <h3>今月の勤務日数</h3>
+            <p class="summary-number">8日</p>
+        </div>
+
+        <div class="summary-card">
+            <h3>今月の勤務時間</h3>
+            <p class="summary-number">42時間</p>
+        </div>
+
+        <div class="summary-card">
+            <h3>次の出勤</h3>
+            <p class="summary-number small">7/10</p>
+            <p class="summary-text">17:00〜22:00</p>
+        </div>
+    </section>
+
+    <section class="calendar-section">
+        <div class="section-header">
+            <h2>2026年7月</h2>
+            <div class="month-navigation">
+                <button type="button">前月</button>
+                <span>今月</span>
+                <button type="button">翌月</button>
+            </div>
+        </div>
+
+        <div class="my-shift-calendar">
+        <div class="calendar-weekday">日</div>
+        <div class="calendar-weekday">月</div>
+        <div class="calendar-weekday">火</div>
+        <div class="calendar-weekday">水</div>
+        <div class="calendar-weekday">木</div>
+        <div class="calendar-weekday">金</div>
+        <div class="calendar-weekday">土</div>
+
+        <div th:each="calendarDay : ${calendarDays}"
+             class="my-shift-day"
+             th:classappend="${calendarDay.blank} ? ' muted' : (${calendarDay.workDay} ? ' work-day' : '')">
+
+            <div th:if="${!calendarDay.blank}">
+                <div class="date-number" th:text="${calendarDay.dayOfMonth}">1</div>
+
+                <div th:if="${calendarDay.workDay}"
+                     class="shift-time"
+                     th:text="${calendarDay.shiftTimeLabel}">
+                    10:00〜15:00
+                </div>
+            </div>
+
+        </div>
+    </div>
+    </section>
+
+    <section class="shift-list-section">
+        <h2>今月のシフト一覧</h2>
+
+        <div class="shift-list">
+            <div class="shift-list-item">
+                <div>
+                    <strong>7月3日（金）</strong>
+                    <p>10:00〜15:00</p>
+                </div>
+                <span class="shift-badge">5時間</span>
+            </div>
+
+            <div class="shift-list-item">
+                <div>
+                    <strong>7月6日（月）</strong>
+                    <p>17:00〜22:00</p>
+                </div>
+                <span class="shift-badge">5時間</span>
+            </div>
+
+            <div class="shift-list-item">
+                <div>
+                    <strong>7月8日（水）</strong>
+                    <p>10:00〜15:00</p>
+                </div>
+                <span class="shift-badge">5時間</span>
+            </div>
+
+            <div class="shift-list-item">
+                <div>
+                    <strong>7月10日（金）</strong>
+                    <p>17:00〜22:00</p>
+                </div>
+                <span class="shift-badge">5時間</span>
+            </div>
+        </div>
+    </section>
+
+</div>
+</body>
+</html>

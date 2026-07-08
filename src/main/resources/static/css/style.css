@@ -989,4 +989,152 @@ main {
     }
 }
 
+/* ==============================
+   自分のシフト画面
+   ============================== */
+
+/* 自分のシフト画面全体の横幅 */
+.my-shift-container {
+    max-width: 1100px;
+}
+
+/* 画面上部：タイトルとトップへ戻るボタン */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+/* トップへ戻るリンク */
+.back-link {
+    display: inline-block;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background-color: #ffffff;
+    text-decoration: none;
+    color: #333;
+    border: 1px solid #ddd;
+    font-weight: 600;
+}
+
+/* 勤務日数・勤務時間・次の出勤のカード全体 */
+.my-shift-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+/* 次の出勤日の数字表示 */
+.summary-number.small {
+    font-size: 28px;
+}
+
+/* 自分のシフト用カレンダー全体 */
+.my-shift-calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+}
+
+/* カレンダー内の1日分の枠 */
+.my-shift-day {
+    min-height: 95px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 14px;
+    padding: 10px;
+}
+
+/* 前月・翌月など、今月以外の日付枠 */
+.my-shift-day.muted {
+    background-color: #f3f3f3;
+    border-color: #eee;
+}
+
+/* 出勤予定がある日の枠 */
+.my-shift-day.work-day {
+    border: 2px solid #4f8cff;
+    background-color: #f4f8ff;
+}
+
+/* 出勤時間の表示 */
+.shift-time {
+    margin-top: 12px;
+    padding: 6px 8px;
+    border-radius: 999px;
+    background-color: #4f8cff;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* 今月のシフト一覧エリア */
+.shift-list-section {
+    margin-top: 32px;
+}
+
+/* シフト一覧全体 */
+.shift-list {
+    display: grid;
+    gap: 12px;
+}
+
+/* シフト一覧の1件分 */
+.shift-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 14px;
+    padding: 16px 18px;
+}
+
+/* シフト一覧内の時間表示 */
+.shift-list-item p {
+    margin: 6px 0 0;
+    color: #666;
+}
+
+/* 勤務時間のバッジ */
+.shift-badge {
+    padding: 6px 12px;
+    border-radius: 999px;
+    background-color: #eef3ff;
+    color: #3366cc;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* スマホ表示用の調整 */
+@media (max-width: 768px) {
+
+    /* タイトルと戻るボタンを縦並びにする */
+    .page-header {
+        flex-direction: column;
+    }
+
+    /* 勤務日数などのカードを1列にする */
+    .my-shift-summary {
+        grid-template-columns: 1fr;
+    }
+
+    /* スマホではカレンダーの1日分を少し小さくする */
+    .my-shift-day {
+        min-height: 78px;
+        padding: 6px;
+    }
+
+    /* スマホでは出勤時間の文字を小さくする */
+    .shift-time {
+        font-size: 11px;
+        padding: 4px 6px;
+    }
+}
+
 
