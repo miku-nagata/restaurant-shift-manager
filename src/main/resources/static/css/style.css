@@ -1137,4 +1137,85 @@ main {
     }
 }
 
+/*   みんなのシフト画面 */
+
+/*
+ * 表の表示範囲を超えた場合に、
+ * 縦横へスクロールできるようにする
+ */
+.all-shifts-page .shift-table-wrapper {
+    width: 100%;
+    max-height: 70vh;
+    overflow: auto;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+/* シフト表全体 */
+.all-shifts-page .all-shifts-table {
+    width: max-content;
+    min-width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+/* 見出しとデータセルの共通設定 */
+.all-shifts-page .all-shifts-table th,
+.all-shifts-page .all-shifts-table td {
+    min-width: 120px;
+    padding: 10px;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    white-space: nowrap;
+    text-align: center;
+    background-color: white;
+}
+
+/*
+ * 従業員名の行を上側に固定する
+ */
+.all-shifts-page .all-shifts-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background-color: #f2f2f2;
+}
+
+/*
+ * 日付列を左端に固定する
+ */
+.all-shifts-page .all-shifts-table .sticky-date {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    width: 80px;
+    min-width: 80px;
+    background-color: white;
+}
+
+/*
+ * 曜日列を日付列の右側に固定する
+ *
+ * 日付列が80pxなので、leftも80pxにする
+ */
+.all-shifts-page .all-shifts-table .sticky-day {
+    position: sticky;
+    left: 80px;
+    z-index: 2;
+    width: 50px;
+    min-width: 50px;
+    background-color: white;
+}
+
+/*
+ * 左上の「日付」「曜日」は、
+ * 上固定と左固定の両方が重なるため、
+ * ほかのセルより手前に表示する
+ */
+.all-shifts-page .all-shifts-table thead .sticky-date,
+.all-shifts-page .all-shifts-table thead .sticky-day {
+    z-index: 4;
+    background-color: #f2f2f2;
+}
+
 

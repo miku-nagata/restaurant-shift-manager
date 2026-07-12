@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>みんなのシフト</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="all-shifts-page">
+<div class="page-header">
+    <div>
+        <h1>みんなのシフト</h1>
+        <p class="page-description">
+            全従業員の出勤予定を確認できます。
+        </p>
+    </div>
+
+    <a th:href="@{/}" class="back-link">トップへ戻る</a>
+</div>
+<main>
+    <section class="card">
+        <h2>みんなのシフト</h2>
+
+        <div class="shift-table-wrapper">
+            <table class="all-shifts-table">
+                <thead>
+                <tr>
+                    <th class="sticky-date">日付</th>
+                    <th class="sticky-day">曜日</th>
+                    <th th:each="employee : ${employees}"
+                        th:text="${employee.name}">
+                    </th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="data : ${dates}">
+
+                    <td class="sticky-date"
+                        th:text="${#temporals.format(data, 'M月d日')}">
+                    </td>
+
+                    <td class="sticky-day"
+                        th:text="${#temporals.format(data, 'E')}">
+                    </td>
+
+                    <td th:each="employee : ${employees}">
+                    </td>
+
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>

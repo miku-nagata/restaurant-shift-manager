@@ -88,8 +88,8 @@
                         <details class="day-status-detail">
                             <summary class="day-status-summary">
 
-                            <span th:if="${status == '不足'}"
-                                  class="status-dot status-shortage"></span>
+                                <span th:if="${status == '不足'}"
+                                      class="status-dot status-shortage"></span>
 
                                 <span th:if="${status == 'OK'}"
                                       class="status-dot status-ok"></span>
@@ -99,8 +99,8 @@
 
                                 <span class="status-text"
                                       th:text="${status}">
-                                OK
-                            </span>
+                                    OK
+                                </span>
                             </summary>
 
                             <div class="calendar-popup">
@@ -118,18 +118,18 @@
                                             09:00〜11:00
                                         </strong>
                                         <span>
-                                        必要
-                                        <span th:text="${slot.requiredCount}">3</span>
-                                        人
-                                    </span>
+                                            必要
+                                            <span th:text="${slot.requiredCount}">3</span>
+                                            人
+                                        </span>
                                     </div>
 
                                     <div class="mini-heatmap">
-                                    <span th:each="block : ${slot.blocks}"
-                                          class="mini-block"
-                                          th:classappend="${block.shortage} ? ' block-shortage' : ' block-ok'"
-                                          th:title="${block.label}">
-                                    </span>
+                                        <span th:each="block : ${slot.blocks}"
+                                              class="mini-block"
+                                              th:classappend="${block.shortage} ? ' block-shortage' : ' block-ok'"
+                                              th:title="${block.label}">
+                                        </span>
                                     </div>
 
                                     <div th:if="${slot.shortage}"
@@ -153,6 +153,22 @@
 
                 </td>
             </tr>
+            </tbody>
+        </table>
+    </section>
+    <section class="card">
+        <h2>全員のシフトを見る</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>従業員名</th>
+                <th>勤務日</th>
+                <th>開始時刻</th>
+                <th>終了時刻</th>
+            </tr>
+            </thead>
+            <tbody>
+
             </tbody>
         </table>
     </section>

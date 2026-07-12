@@ -31,7 +31,7 @@ public class ShiftAssignment {
     private LocalTime endTime;
 
 
-    // このシフトに割り当てられた従業員です。
+    // このシフトに割り当てられた従業員
     // @ManyToOne は「1人の従業員が、複数のシフト結果を持つことができる」という関係を表す
     @ManyToOne
     private Employee employee;
