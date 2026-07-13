@@ -5,7 +5,9 @@
     <title>みんなのシフト</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
+
 <body class="all-shifts-page">
+
 <div class="page-header">
     <div>
         <h1>みんなのシフト</h1>
@@ -16,16 +18,19 @@
 
     <a th:href="@{/}" class="back-link">トップへ戻る</a>
 </div>
+
 <main>
     <section class="card">
         <h2>みんなのシフト</h2>
 
         <div class="shift-table-wrapper">
             <table class="all-shifts-table">
+
                 <thead>
                 <tr>
                     <th class="sticky-date">日付</th>
                     <th class="sticky-day">曜日</th>
+
                     <th th:each="employee : ${employees}"
                         th:text="${employee.name}">
                     </th>
@@ -33,24 +38,38 @@
                 </thead>
 
                 <tbody>
-                <tr th:each="data : ${dates}">
+                <tr th:each="date : ${dates}">
 
                     <td class="sticky-date"
-                        th:text="${#temporals.format(data, 'M月d日')}">
+                        th:text="${#temporals.format(date, 'M月d日')}">
                     </td>
 
                     <td class="sticky-day"
-                        th:text="${#temporals.format(data, 'E')}">
+                        th:text="${#temporals.format(date, 'E')}">
                     </td>
 
-                    <td th:each="employee : ${employees}">
+                    <td th:each="employee : ${employees}"
+                        th:with="assignment=${assignmentMap.containsKey(date)
+                            ? assignmentMap.get(date).get(employee.id)
+                            : null}">
+
+                        <span th:if="${assignment != null}"
+                              th:text="|${#temporals.format(assignment.startTime, 'HH:mm')}〜${#temporals.format(assignment.endTime, 'HH:mm')}|">
+                        </span>
+
+                        <span th:if="${assignment == null}">
+                            休み
+                        </span>
+
                     </td>
 
                 </tr>
                 </tbody>
+
             </table>
         </div>
     </section>
 </main>
+
 </body>
 </html>
