@@ -5,72 +5,149 @@
     <title>勤務希望登録</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
+
 <body>
 <div class="container">
-<h1>勤務希望登録</h1>
-    <p class="error-message" th:if="${errorMessage}" th:text="${errorMessage}">
+
+    <h1>勤務希望登録</h1>
+
+    <p class="error-message"
+       th:if="${errorMessage}"
+       th:text="${errorMessage}">
         エラーメッセージ
     </p>
 
-<form action="/shift-requests" method="post">
-    <p>
-        <label for="employeeId">従業員</label><br>
-        <select id="employeeId" name="employeeId" required>
-        <option value="">選択してください</option>
-        <option th:each="employee : ${employees}"
-                th:value="${employee.id}"
-                th:text="${employee.name}"
-                th:selected="${employee.id == selectedEmployeeId}">
-            山田 太郎
-        </option>
-    </select>
-    </p>
+    <form action="/shift-requests" method="post">
+
+        <p>
+            <label for="employeeId">従業員</label><br>
+
+            <select id="employeeId"
+                    name="employeeId"
+                    required>
+
+                <option value="">選択してください</option>
+
+                <option th:each="employee : ${employees}"
+                        th:value="${employee.id}"
+                        th:text="${employee.name}"
+                        th:selected="${employee.id == selectedEmployeeId}">
+                    山田 太郎
+                </option>
+
+            </select>
+        </p>
+
+        <p>
+            <label for="workDate">日付</label><br>
+
+            <input type="date"
+                   id="workDate"
+                   name="workDate"
+                   th:value="${workDate}"
+                   required>
+        </p>
+
+        <p>
+            <label for="requestType">希望区分</label><br>
+
+            <select id="requestType"
+                    name="requestType"
+                    required>
+
+                <option value="出勤希望"
+                        th:selected="${selectedRequestType == '出勤希望'}">
+                    出勤希望
+                </option>
+
+                <option value="休み希望"
+                        th:selected="${selectedRequestType == '休み希望'}">
+                    休み希望
+                </option>
+
+            </select>
+        </p>
+
+        <p>
+            <label for="startTime">開始時刻</label><br>
+
+            <select id="startTime"
+                    name="startTime">
+
+                <option value="">選択してください</option>
+
+                <option th:each="time : ${timeOptions}"
+                        th:value="${time}"
+                        th:text="${time}"
+                        th:selected="${time == selectedStartTime}">
+                    09:00
+                </option>
+
+            </select>
+        </p>
+
+        <p>
+            <label for="endTime">終了時刻</label><br>
+
+            <select id="endTime"
+                    name="endTime">
+
+                <option value="">選択してください</option>
+
+                <option th:each="time : ${timeOptions}"
+                        th:value="${time}"
+                        th:text="${time}"
+                        th:selected="${time == selectedEndTime}">
+                    09:30
+                </option>
+
+            </select>
+        </p>
+
+        <button type="submit">登録する</button>
+
+    </form>
 
     <p>
-        <label for="workDate">日付</label><br>
-        <input type="date" id="workDate" name="workDate" th:value="${workDate}" required>
+        <a href="/shift-requests">勤務希望一覧へ戻る</a>
     </p>
 
-    <p>
-        <label for="startTime">開始時刻</label><br>
-        <select id="startTime" name="startTime" required>
-            <option value="">選択してください</option>
-            <option th:each="time : ${timeOptions}"
-                    th:value="${time}"
-                    th:text="${time}"
-                    th:selected="${time == selectedStartTime}">
-                09:00
-            </option>
-        </select>
-    </p>
-
-    <p>
-        <label for="endTime">終了時刻</label><br>
-        <select id="endTime" name="endTime" required>
-            <option value="">選択してください</option>
-            <option th:each="time : ${timeOptions}"
-                    th:value="${time}"
-                    th:text="${time}"
-                    th:selected="${time == selectedEndTime}">
-                09:30
-            </option>
-        </select>
-    </p>
-
-    <p>
-        <label for="requestType">希望区分</label><br>
-        <select id="requestType" name="requestType" required>
-            <option value="出勤希望" th:selected="${selectedRequestType == '出勤希望'}">出勤希望</option>
-            <option value="休み希望" th:selected="${selectedRequestType == '休み希望'}">休み希望</option>
-        </select>
-    </p>
-
-    <button type="submit">登録する</button>
-</form>
-
-<p>
-    <a href="/shift-requests">勤務希望一覧へ戻る</a>
-</p>
 </div>
+
+<script>
+    const requestType = document.getElementById("requestType");
+    const startTime = document.getElementById("startTime");
+    const endTime = document.getElementById("endTime");
+
+    function updateTimeInputs() {
+        const isDayOff = requestType.value === "休み希望";
+
+        if (isDayOff) {
+            // 休み希望では時間を使わない
+            startTime.value = "";
+            endTime.value = "";
+
+            startTime.disabled = true;
+            endTime.disabled = true;
+
+            startTime.required = false;
+            endTime.required = false;
+        } else {
+            // 出勤希望では時間を必須にする
+            startTime.disabled = false;
+            endTime.disabled = false;
+
+            startTime.required = true;
+            endTime.required = true;
+        }
+    }
+
+    // 希望区分を変更したときに実行する
+    requestType.addEventListener("change", updateTimeInputs);
+
+    // 画面を最初に開いたときにも実行する
+    updateTimeInputs();
+</script>
+
 </body>
 </html>
