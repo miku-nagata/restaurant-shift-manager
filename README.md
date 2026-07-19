@@ -34,6 +34,16 @@ https://restaurant-shift-manager.onrender.com
 
 ※ Renderの無料プランで公開しているため、初回アクセス時は起動まで時間がかかる場合があります。
 
+
+---
+## 技術ドキュメント
+
+実装した機能の仕様やクラスごとの役割、
+画面からデータベースまでの処理の流れをNotionにまとめています。
+
+[Notionの技術ドキュメントを見る](https://adaptable-jasmine-9c3.notion.site/Hub-33102beb52894d6a87f0dd4c218c246e)
+
+
 ---
 
 ## 動作確認用アカウント

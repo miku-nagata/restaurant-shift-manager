@@ -108,30 +108,20 @@ public class ShiftRequestController {
          * 入力画面をもう一度表示する
          */
         if (errorMessage != null) {
-
             model.addAttribute(
-                    "errorMessage",
-                    errorMessage
+                    "errorMessage", errorMessage
             );
-
             model.addAttribute(
-                    "employees",
-                    employeeRepository.findAll()
+                    "employees", employeeRepository.findAll()
             );
-
             model.addAttribute(
-                    "timeOptions",
-                    createTimeOptions()
+                    "timeOptions", createTimeOptions()
             );
-
             model.addAttribute(
-                    "selectedEmployeeId",
-                    employeeId
+                    "selectedEmployeeId", employeeId
             );
-
             model.addAttribute(
-                    "workDate",
-                    workDate
+                    "workDate", workDate
             );
 
             /*
@@ -139,10 +129,7 @@ public class ShiftRequestController {
              * エラーになるため、nullを確認する
              */
             model.addAttribute(
-                    "selectedStartTime",
-                    startTime != null
-                            ? startTime.toString()
-                            : null
+                    "selectedStartTime", startTime != null ? startTime.toString() : null
             );
 
             model.addAttribute(
@@ -162,11 +149,7 @@ public class ShiftRequestController {
 
         Employee employee =
                 employeeRepository.findById(employeeId)
-                        .orElseThrow(() ->
-                                new IllegalArgumentException(
-                                        "従業員が見つかりません: "
-                                                + employeeId
-                                )
+                        .orElseThrow(() -> new IllegalArgumentException("従業員が見つかりません: " + employeeId)
                         );
 
         ShiftRequest shiftRequest =
@@ -179,7 +162,6 @@ public class ShiftRequestController {
                 );
 
         shiftRequestRepository.save(shiftRequest);
-
         return "redirect:/shift-requests";
     }
 
