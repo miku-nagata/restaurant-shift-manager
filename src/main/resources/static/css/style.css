@@ -1220,7 +1220,6 @@ main {
 
 /* ==============================
    ダッシュボード：スマホ表示
-   必ずstyle.cssの一番最後に置く
    ============================== */
 @media (max-width: 768px) {
 
@@ -1337,6 +1336,68 @@ main {
     .dashboard-container .calendar-legend {
         gap: 8px 12px;
         font-size: 12px;
+    }
+}
+/* ==============================
+   自分のシフト：スマホ表示の修正
+   ============================== */
+@media (max-width: 768px) {
+
+    /* カレンダーを画面幅に収める */
+    .my-shift-container .my-shift-calendar {
+        width: 100%;
+        max-width: 100%;
+
+        /* 7列をすべて同じ幅にする */
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+
+        gap: 4px;
+
+        /* この画面では横スクロールさせない */
+        overflow: visible;
+    }
+
+    /* 曜日の幅も縮められるようにする */
+    .my-shift-container .calendar-weekday {
+        min-width: 0;
+        font-size: 13px;
+        text-align: center;
+    }
+
+    /* 日付マスをすべて同じ幅にする */
+    .my-shift-container .my-shift-day {
+        min-width: 0;
+        min-height: 78px;
+        padding: 5px 2px;
+        border-radius: 10px;
+        box-sizing: border-box;
+    }
+
+    /* 勤務時間が列幅を押し広げないようにする */
+    .my-shift-container .my-shift-day .shift-time {
+        min-width: 0;
+        margin-top: 8px;
+        padding: 4px 1px;
+        border-radius: 10px;
+
+        font-size: 10px;
+        line-height: 1.3;
+        text-align: center;
+
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    /* 年月と月移動ボタンの間隔 */
+    .my-shift-container .calendar-header {
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .my-shift-container .month-navigation {
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
 }
 
