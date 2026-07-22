@@ -1218,4 +1218,126 @@ main {
     background-color: #f2f2f2;
 }
 
+/* ==============================
+   ダッシュボード：スマホ表示
+   必ずstyle.cssの一番最後に置く
+   ============================== */
+@media (max-width: 768px) {
+
+    /* ページ全体の余白を小さくする */
+    .dashboard-container {
+        margin: 10px;
+        padding: 18px 14px;
+    }
+
+    /* タイトルとログアウトを横並びにしない */
+    .dashboard-container .dashboard-header {
+        display: block;
+    }
+
+    /* タイトルを少し小さくする */
+    .dashboard-container .dashboard-header h1 {
+        font-size: 27px;
+        line-height: 1.4;
+        margin-bottom: 12px;
+    }
+
+    /* ログアウトボタンを右寄せする */
+    .dashboard-container .logout-form {
+        text-align: right;
+        margin-bottom: 20px;
+    }
+
+    .dashboard-container .logout-form button {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+
+    /* 操作ボタンを1列にする */
+    .dashboard-container .action-buttons {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .dashboard-container .action-button {
+        box-sizing: border-box;
+        width: 100%;
+        text-align: center;
+    }
+
+    /* 集計カードを1列にする */
+    .dashboard-container .dashboard-summary {
+        grid-template-columns: 1fr;
+    }
+
+    /* 従業員・管理メニューも1列にする */
+    .dashboard-container .menu-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* カレンダー上部を縦並びにする */
+    .dashboard-container .section-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    /* 前月・今月・翌月を横幅いっぱいに配置 */
+    .dashboard-container .month-navigation {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    /* カレンダー枠の余白を小さくする */
+    .dashboard-container .calendar-section {
+        padding: 12px;
+    }
+
+    /* 7列を画面内に収める */
+    .dashboard-container .calendar {
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 4px;
+        overflow: visible;
+    }
+
+    /* 曜日の文字 */
+    .dashboard-container .calendar-weekday {
+        font-size: 13px;
+    }
+
+    /* 1日分のマス */
+    .dashboard-container .calendar-day {
+        min-height: 64px;
+        padding: 5px 2px;
+    }
+
+    /* 日付を中央に表示 */
+    .dashboard-container .date-number {
+        margin-bottom: 7px;
+        font-size: 14px;
+        text-align: center;
+    }
+
+    /*
+     * スマホでは「未作成」などの文字を消して、
+     * 状態を色付きの丸で表示する
+     */
+    .dashboard-container .day-status {
+        display: block;
+        width: 13px;
+        height: 13px;
+        margin: 0 auto;
+        padding: 0;
+        border-radius: 50%;
+        font-size: 0;
+    }
+
+    /* カレンダー下の色説明 */
+    .dashboard-container .calendar-legend {
+        gap: 8px 12px;
+        font-size: 12px;
+    }
+}
+
 
