@@ -2,6 +2,7 @@
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>自分のシフト</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
@@ -48,30 +49,30 @@
         </div>
 
         <div class="my-shift-calendar">
-        <div class="calendar-weekday">日</div>
-        <div class="calendar-weekday">月</div>
-        <div class="calendar-weekday">火</div>
-        <div class="calendar-weekday">水</div>
-        <div class="calendar-weekday">木</div>
-        <div class="calendar-weekday">金</div>
-        <div class="calendar-weekday">土</div>
+            <div class="calendar-weekday">日</div>
+            <div class="calendar-weekday">月</div>
+            <div class="calendar-weekday">火</div>
+            <div class="calendar-weekday">水</div>
+            <div class="calendar-weekday">木</div>
+            <div class="calendar-weekday">金</div>
+            <div class="calendar-weekday">土</div>
 
-        <div th:each="calendarDay : ${calendarDays}"
-             class="my-shift-day"
-             th:classappend="${calendarDay.blank} ? ' muted' : (${calendarDay.workDay} ? ' work-day' : '')">
+            <div th:each="calendarDay : ${calendarDays}"
+                 class="my-shift-day"
+                 th:classappend="${calendarDay.blank} ? ' muted' : (${calendarDay.workDay} ? ' work-day' : '')">
 
-            <div th:if="${!calendarDay.blank}">
-                <div class="date-number" th:text="${calendarDay.dayOfMonth}">1</div>
+                <div th:if="${!calendarDay.blank}">
+                    <div class="date-number" th:text="${calendarDay.dayOfMonth}">1</div>
 
-                <div th:if="${calendarDay.workDay}"
-                     class="shift-time"
-                     th:text="${calendarDay.shiftTimeLabel}">
-                    10:00〜15:00
+                    <div th:if="${calendarDay.workDay}"
+                         class="shift-time"
+                         th:text="${calendarDay.shiftTimeLabel}">
+                        10:00〜15:00
+                    </div>
                 </div>
-            </div>
 
+            </div>
         </div>
-    </div>
     </section>
 
     <section class="shift-list-section">

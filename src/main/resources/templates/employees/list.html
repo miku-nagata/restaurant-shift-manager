@@ -2,6 +2,7 @@
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>従業員一覧</title>
     <style>
         table {
@@ -17,54 +18,54 @@
 </head>
 <body>
 <div class="container">
-<h1>従業員一覧</h1>
+    <h1>従業員一覧</h1>
 
-<p>登録されている従業員を表示します。</p>
+    <p>登録されている従業員を表示します。</p>
 
-<p>
-    <a href="/employees/new">従業員を新規登録する</a>
-</p>
+    <p>
+        <a href="/employees/new">従業員を新規登録する</a>
+    </p>
 
-<table>
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>氏名</th>
-        <th>雇用形態</th>
-        <th>熟練度</th>
-        <th>時給</th>
-        <th>月上限時間</th>
-        <th>月上限金額</th>
-        <th>操作</th>
-    </tr>
-    </thead>
-    <tbody>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>氏名</th>
+            <th>雇用形態</th>
+            <th>熟練度</th>
+            <th>時給</th>
+            <th>月上限時間</th>
+            <th>月上限金額</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
 
-    <!-- データの繰り返し -->
-    <tr th:each="employee : ${employees}">
-        <td th:text="${employee.id}">1</td>
-        <td th:text="${employee.name}">山田 太郎</td>
-        <td th:text="${employee.employmentType}">アルバイト</td>
-        <td th:text="${employee.skillLevel}">通常</td>
-        <td th:text="${employee.hourlyWage}">1000</td>
-        <td th:text="${employee.monthlyHourLimit}">80</td>
-        <td th:text="${employee.monthlyIncomeLimit}">88000</td>
-        <td>
-            <a th:href="@{/employees/{id}/edit(id=${employee.id})}">編集</a>
+        <!-- データの繰り返し -->
+        <tr th:each="employee : ${employees}">
+            <td th:text="${employee.id}">1</td>
+            <td th:text="${employee.name}">山田 太郎</td>
+            <td th:text="${employee.employmentType}">アルバイト</td>
+            <td th:text="${employee.skillLevel}">通常</td>
+            <td th:text="${employee.hourlyWage}">1000</td>
+            <td th:text="${employee.monthlyHourLimit}">80</td>
+            <td th:text="${employee.monthlyIncomeLimit}">88000</td>
+            <td>
+                <a th:href="@{/employees/{id}/edit(id=${employee.id})}">編集</a>
 
-            <form th:action="@{/employees/{id}/delete(id=${employee.id})}" method="post" style="display:inline;">
-                <button type="submit" class="danger-button" onclick="return confirm('この従業員を削除しますか？');">
-                    削除
-                </button>
-            </form>
-        </td>
-    </tr>
-    </tbody>
-</table>
+                <form th:action="@{/employees/{id}/delete(id=${employee.id})}" method="post" style="display:inline;">
+                    <button type="submit" class="danger-button" onclick="return confirm('この従業員を削除しますか？');">
+                        削除
+                    </button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 
-<p>
-    <a href="/">トップページへ戻る</a>
-</p>
+    <p>
+        <a href="/">トップページへ戻る</a>
+    </p>
 </div>
 </body>
 </html>

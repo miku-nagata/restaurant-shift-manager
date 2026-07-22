@@ -2,6 +2,7 @@
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>必要人数編集</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
@@ -47,7 +48,8 @@
 
         <p>
             <label for="requiredCount">必要人数</label><br>
-            <input type="number" id="requiredCount" name="requiredCount" th:value="${requiredStaff.requiredCount}" required>
+            <input type="number" id="requiredCount" name="requiredCount" th:value="${requiredStaff.requiredCount}"
+                   required>
         </p>
 
         <button type="submit">更新する</button>

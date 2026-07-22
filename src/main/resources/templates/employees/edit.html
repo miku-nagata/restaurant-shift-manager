@@ -2,64 +2,65 @@
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>従業員編集</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 <div class="container">
-<h1>従業員編集</h1>
+    <h1>従業員編集</h1>
     <p class="error-message" th:if="${errorMessage}" th:text="${errorMessage}">
         エラーメッセージ
     </p>
 
-<form th:action="@{/employees/{id}/edit(id=${employee.id})}" th:object="${employee}" method="post">
-    <p>
-        <label for="name">氏名</label><br>
-        <input type="text" id="name" th:field="*{name}">
-    </p>
+    <form th:action="@{/employees/{id}/edit(id=${employee.id})}" th:object="${employee}" method="post">
+        <p>
+            <label for="name">氏名</label><br>
+            <input type="text" id="name" th:field="*{name}">
+        </p>
+
+        <p>
+            <label for="employmentType">雇用形態</label><br>
+            <select id="employmentType" th:field="*{employmentType}">
+                <option value="">選択してください</option>
+                <option value="正社員">正社員</option>
+                <option value="パート">パート</option>
+                <option value="アルバイト">アルバイト</option>
+                <option value="留学生">留学生</option>
+            </select>
+        </p>
+
+        <p>
+            <label for="skillLevel">熟練度</label><br>
+            <select id="skillLevel" th:field="*{skillLevel}">
+                <option value="">選択してください</option>
+                <option value="新人">新人</option>
+                <option value="通常">通常</option>
+                <option value="ベテラン">ベテラン</option>
+            </select>
+        </p>
+
+        <p>
+            <label for="hourlyWage">時給</label><br>
+            <input type="number" id="hourlyWage" th:field="*{hourlyWage}">
+        </p>
+
+        <p>
+            <label for="monthlyHourLimit">月上限時間</label><br>
+            <input type="number" id="monthlyHourLimit" th:field="*{monthlyHourLimit}">
+        </p>
+
+        <p>
+            <label for="monthlyIncomeLimit">月上限金額</label><br>
+            <input type="number" id="monthlyIncomeLimit" th:field="*{monthlyIncomeLimit}">
+        </p>
+
+        <button type="submit">更新する</button>
+    </form>
 
     <p>
-        <label for="employmentType">雇用形態</label><br>
-        <select id="employmentType" th:field="*{employmentType}">
-            <option value="">選択してください</option>
-            <option value="正社員">正社員</option>
-            <option value="パート">パート</option>
-            <option value="アルバイト">アルバイト</option>
-            <option value="留学生">留学生</option>
-        </select>
+        <a href="/employees">従業員一覧へ戻る</a>
     </p>
-
-    <p>
-        <label for="skillLevel">熟練度</label><br>
-        <select id="skillLevel" th:field="*{skillLevel}">
-            <option value="">選択してください</option>
-            <option value="新人">新人</option>
-            <option value="通常">通常</option>
-            <option value="ベテラン">ベテラン</option>
-        </select>
-    </p>
-
-    <p>
-        <label for="hourlyWage">時給</label><br>
-        <input type="number" id="hourlyWage" th:field="*{hourlyWage}">
-    </p>
-
-    <p>
-        <label for="monthlyHourLimit">月上限時間</label><br>
-        <input type="number" id="monthlyHourLimit" th:field="*{monthlyHourLimit}">
-    </p>
-
-    <p>
-        <label for="monthlyIncomeLimit">月上限金額</label><br>
-        <input type="number" id="monthlyIncomeLimit" th:field="*{monthlyIncomeLimit}">
-    </p>
-
-    <button type="submit">更新する</button>
-</form>
-
-<p>
-    <a href="/employees">従業員一覧へ戻る</a>
-</p>
 </div>
 </body>
 </html>

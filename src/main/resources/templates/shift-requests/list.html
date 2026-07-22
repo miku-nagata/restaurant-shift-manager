@@ -2,6 +2,7 @@
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>勤務希望一覧</title>
     <style>
         table {
@@ -17,50 +18,52 @@
 </head>
 <body>
 <div class="container">
-<h1>勤務希望一覧</h1>
+    <h1>勤務希望一覧</h1>
 
-<p>登録されている勤務希望を表示します。</p>
+    <p>登録されている勤務希望を表示します。</p>
 
-<p>
-    <a href="/shift-requests/new">勤務希望を新規登録する</a>
-</p>
+    <p>
+        <a href="/shift-requests/new">勤務希望を新規登録する</a>
+    </p>
 
-<table>
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>従業員名</th>
-        <th>日付</th>
-        <th>開始時刻</th>
-        <th>終了時刻</th>
-        <th>希望区分</th>
-        <th>操作</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="shiftRequest : ${shiftRequests}">
-        <td th:text="${shiftRequest.id}">1</td>
-        <td th:text="${shiftRequest.employee.name}">山田 太郎</td>
-        <td th:text="${shiftRequest.workDate}">2026-07-01</td>
-        <td th:text="${shiftRequest.startTime}">10:00</td>
-        <td th:text="${shiftRequest.endTime}">14:00</td>
-        <td th:text="${shiftRequest.requestType}">出勤希望</td>
-        <td>
-            <a th:href="@{/shift-requests/{id}/edit(id=${shiftRequest.id})}">編集</a>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>従業員名</th>
+            <th>日付</th>
+            <th>開始時刻</th>
+            <th>終了時刻</th>
+            <th>希望区分</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="shiftRequest : ${shiftRequests}">
+            <td th:text="${shiftRequest.id}">1</td>
+            <td th:text="${shiftRequest.employee.name}">山田 太郎</td>
+            <td th:text="${shiftRequest.workDate}">2026-07-01</td>
+            <td th:text="${shiftRequest.startTime}">10:00</td>
+            <td th:text="${shiftRequest.endTime}">14:00</td>
+            <td th:text="${shiftRequest.requestType}">出勤希望</td>
+            <td>
+                <a th:href="@{/shift-requests/{id}/edit(id=${shiftRequest.id})}">編集</a>
 
-            <form th:action="@{/shift-requests/{id}/delete(id=${shiftRequest.id})}" method="post" style="display:inline;">
-                <button type="submit" class="danger-button" onclick="return confirm('この勤務希望を削除しますか？');">
-                    削除
-                </button>
-            </form>
-        </td>
-    </tr>
-    </tbody>
-</table>
+                <form th:action="@{/shift-requests/{id}/delete(id=${shiftRequest.id})}" method="post"
+                      style="display:inline;">
+                    <button type="submit" class="danger-button"
+                            onclick="return confirm('この勤務希望を削除しますか？');">
+                        削除
+                    </button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 
-<p>
-    <a href="/">トップページへ戻る</a>
-</p>
+    <p>
+        <a href="/">トップページへ戻る</a>
+    </p>
 </div>
 </body>
 </html>
