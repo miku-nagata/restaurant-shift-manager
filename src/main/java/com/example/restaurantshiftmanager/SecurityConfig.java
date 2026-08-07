@@ -36,15 +36,22 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/required-staff")
                         .hasAnyRole("ADMIN", "DEMO")
 
-                        // 必要人数の登録・編集・削除は管理者のみ
+                        // 必要人数設定は管理者のみ
                         .requestMatchers("/required-staff", "/required-staff/**")
                         .hasRole("ADMIN")
 
+                        // 不足状況は管理者・デモユーザーが閲覧できる
+                        .requestMatchers(HttpMethod.GET, "/shortages", "/shortages/**")
+                        .hasAnyRole("ADMIN", "DEMO")
 
-                        // 必要人数設定は管理者のみ
-                        .requestMatchers("/required-staff", "/required-staff/**").hasRole("ADMIN")
+                        // シフト自動作成だけはデモユーザーも実行できる
+                        .requestMatchers(HttpMethod.POST, "/shortages/calendar/create")
+                        .hasAnyRole("ADMIN", "DEMO")
 
-                
+                        // それ以外の変更操作は管理者のみ
+                        .requestMatchers("/shortages", "/shortages/**")
+                        .hasRole("ADMIN")
+
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
