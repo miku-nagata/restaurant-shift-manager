@@ -52,6 +52,14 @@ public class SecurityConfig {
                         .requestMatchers("/shortages", "/shortages/**")
                         .hasRole("ADMIN")
 
+                        // 曜日別必要人数パターン一覧は管理者・デモユーザーが閲覧できる
+                        .requestMatchers(HttpMethod.GET, "/required-staff-patterns")
+                        .hasAnyRole("ADMIN", "DEMO")
+
+                        // 必要人数パターンの登録・編集・削除・月への反映は管理者のみ
+                        .requestMatchers("/required-staff-patterns", "/required-staff-patterns/**")
+                        .hasRole("ADMIN")
+
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
