@@ -65,14 +65,15 @@ public class EmployeeController {
     // URLのidに入っている従業員データを受け取り、画面編集を表示する
     @GetMapping("/employees/{id}/edit")
     public String editForm(@PathVariable Long id, Model model) {
-        /* ラムダ式
-        IDに一致する従業員が見つからない場合、エラーを発生させる
-        Employee employee = employeeRepository.findById(id)
-                必要になったらIllegalArgumentExceptionを作る
-                .orElseThrow(() -> new IllegalArgumentException("従業員が見つかりません: " + id));
-        model.addAttribute("employee", employee);
-        return "employees/edit";
-        */
+        /*
+         * ラムダ式
+         * IDに一致する従業員が見つからない場合、エラーを発生させる
+         * Employee employee = employeeRepository.findById(id)
+         * 必要になったらIllegalArgumentExceptionを作る
+         * .orElseThrow(() -> new IllegalArgumentException("従業員が見つかりません: " + id));
+         * model.addAttribute("employee", employee);
+         * return "employees/edit";
+         */
         // 指定されたIDの従業員を探す
         Optional<Employee> result = employeeRepository.findById(id);
         // 見つからなかったらエラーを発生させる
@@ -104,7 +105,7 @@ public class EmployeeController {
 
         // ラムダ式
         // Employee employee = employeeRepository.findById(id)
-        //        .orElseThrow(() -> new IllegalArgumentException("従業員が見つかりません: " + id));
+        // .orElseThrow(() -> new IllegalArgumentException("従業員が見つかりません: " + id));
 
         // 指定されたIDの従業員を探す
         Optional<Employee> result = employeeRepository.findById(id);

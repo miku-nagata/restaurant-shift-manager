@@ -39,7 +39,8 @@ public class HomeController {
         boolean isAdmin = authentication.getAuthorities()
         .stream()
         .anyMatch(authority ->
-                authority.getAuthority().equals("ROLE_ADMIN"));
+                authority.getAuthority().equals("ROLE_ADMIN")
+                || authority.getAuthority().equals("ROLE_DEMO"));
 
         if (!isAdmin) {
             return "staff-index";

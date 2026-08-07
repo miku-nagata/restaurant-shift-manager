@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+// 必要人数の一覧表示・新規登録・編集・削除を受け持つController
 @Controller
 public class RequiredStaffController {
 
@@ -40,8 +41,7 @@ public class RequiredStaffController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime startTime,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime endTime,
             @RequestParam Integer requiredCount,
-            Model model
-    ) {
+            Model model) {
         String errorMessage = validateRequiredStaff(null, workDate, startTime, endTime, requiredCount);
 
         if (errorMessage != null) {
@@ -80,8 +80,7 @@ public class RequiredStaffController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime startTime,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime endTime,
             @RequestParam Integer requiredCount,
-            Model model
-    ) {
+            Model model) {
         RequiredStaff requiredStaff = requiredStaffRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("必要人数設定が見つかりません: " + id));
 
@@ -112,10 +111,10 @@ public class RequiredStaffController {
     }
 
     private String validateRequiredStaff(Long currentRequiredStaffId,
-                                         LocalDate workDate,
-                                         LocalTime startTime,
-                                         LocalTime endTime,
-                                         Integer requiredCount) {
+            LocalDate workDate,
+            LocalTime startTime,
+            LocalTime endTime,
+            Integer requiredCount) {
         if (!startTime.isBefore(endTime)) {
             return "開始時刻は終了時刻より前にしてください。";
         }
@@ -133,9 +132,8 @@ public class RequiredStaffController {
 
             boolean sameDate = existingRequiredStaff.getWorkDate().equals(workDate);
 
-            boolean overlaps =
-                    startTime.isBefore(existingRequiredStaff.getEndTime()) &&
-                            endTime.isAfter(existingRequiredStaff.getStartTime());
+            boolean overlaps = startTime.isBefore(existingRequiredStaff.getEndTime()) &&
+                    endTime.isAfter(existingRequiredStaff.getStartTime());
 
             if (sameDate && overlaps) {
                 return "同じ日付・時間帯に必要人数設定が登録されています。";
@@ -160,7 +158,6 @@ public class RequiredStaffController {
                 "19:00", "19:30",
                 "20:00", "20:30",
                 "21:00", "21:30",
-                "22:00"
-        );
+                "22:00");
     }
 }

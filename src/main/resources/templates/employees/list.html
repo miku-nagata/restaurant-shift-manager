@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,63 +10,74 @@
             border-collapse: collapse;
         }
 
-        th, td {
+        th,
+        td {
             border: 1px solid #333;
             padding: 8px;
         }
     </style>
     <link rel="stylesheet" href="/css/style.css">
 </head>
+
 <body>
-<div class="container">
-    <h1>従業員一覧</h1>
+    <div class="container">
+        <h1>従業員一覧</h1>
 
-    <p>登録されている従業員を表示します。</p>
+        <p>登録されている従業員を表示します。</p>
 
-    <p>
-        <a href="/employees/new">従業員を新規登録する</a>
-    </p>
+        <p sec:authorize="hasRole('ROLE_ADMIN')">
+            <a href="/employees/new">従業員を新規登録する</a>
+        </p>
 
-    <table>
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>氏名</th>
-            <th>雇用形態</th>
-            <th>熟練度</th>
-            <th>時給</th>
-            <th>月上限時間</th>
-            <th>月上限金額</th>
-            <th>操作</th>
-        </tr>
-        </thead>
-        <tbody>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>氏名</th>
+                    <th>雇用形態</th>
+                    <th>熟練度</th>
+                    <th>時給</th>
+                    <th>月上限時間</th>
+                    <th>月上限金額</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
 
-        <!-- データの繰り返し -->
-        <tr th:each="employee : ${employees}">
-            <td th:text="${employee.id}">1</td>
-            <td th:text="${employee.name}">山田 太郎</td>
-            <td th:text="${employee.employmentType}">アルバイト</td>
-            <td th:text="${employee.skillLevel}">通常</td>
-            <td th:text="${employee.hourlyWage}">1000</td>
-            <td th:text="${employee.monthlyHourLimit}">80</td>
-            <td th:text="${employee.monthlyIncomeLimit}">88000</td>
-            <td>
-                <a th:href="@{/employees/{id}/edit(id=${employee.id})}">編集</a>
+                <!-- データの繰り返し -->
+                <tr th:each="employee : ${employees}">
+                    <td th:text="${employee.id}">1</td>
+                    <td th:text="${employee.name}">山田 太郎</td>
+                    <td th:text="${employee.employmentType}">アルバイト</td>
+                    <td th:text="${employee.skillLevel}">通常</td>
+                    <td th:text="${employee.hourlyWage}">1000</td>
+                    <td th:text="${employee.monthlyHourLimit}">80</td>
+                    <td th:text="${employee.monthlyIncomeLimit}">88000</td>
+                    <td>
+                        <div sec:authorize="hasRole('ROLE_ADMIN')">
 
-                <form th:action="@{/employees/{id}/delete(id=${employee.id})}" method="post" style="display:inline;">
-                    <button type="submit" class="danger-button" onclick="return confirm('この従業員を削除しますか？');">
-                        削除
-                    </button>
-                </form>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+                            <a th:href="@{/employees/{id}/edit(id=${employee.id})}">
+                                編集
+                            </a>
 
-    <p>
-        <a href="/">トップページへ戻る</a>
-    </p>
-</div>
+                            <form th:action="@{/employees/{id}/delete(id=${employee.id})}" method="post"
+                                style="display:inline;">
+
+                                <button type="submit" class="danger-button" onclick="return confirm('この従業員を削除しますか？');">
+                                    削除
+                                </button>
+
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>
+            <a href="/">トップページへ戻る</a>
+        </p>
+    </div>
 </body>
+
 </html>

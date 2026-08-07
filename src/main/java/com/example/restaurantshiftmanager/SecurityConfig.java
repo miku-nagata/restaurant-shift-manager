@@ -10,6 +10,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.http.HttpMethod;
+
 
 @Configuration
 public class SecurityConfig {
@@ -22,8 +24,23 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**", "/h2-console/**", "/login").permitAll()
                 
-                        // 従業員管理は管理者のみ
-                        .requestMatchers("/employees", "/employees/**").hasRole("ADMIN")
+                        // 従業員一覧は管理者・デモユーザーが閲覧できる
+                        .requestMatchers(HttpMethod.GET, "/employees")
+                        .hasAnyRole("ADMIN", "DEMO")
+
+                        // 従業員の登録・編集・削除は管理者のみ
+                        .requestMatchers("/employees", "/employees/**")
+                        .hasRole("ADMIN")
+
+                        // 必要人数一覧は管理者・デモユーザーが閲覧できる
+                        .requestMatchers(HttpMethod.GET, "/required-staff")
+                        .hasAnyRole("ADMIN", "DEMO")
+
+                        // 必要人数の登録・編集・削除は管理者のみ
+                        .requestMatchers("/required-staff", "/required-staff/**")
+                        .hasRole("ADMIN")
+
+
                         // 必要人数設定は管理者のみ
                         .requestMatchers("/required-staff", "/required-staff/**").hasRole("ADMIN")
 
@@ -60,7 +77,18 @@ public class SecurityConfig {
         .roles("STAFF")
         .build();
 
-        return new InMemoryUserDetailsManager(adminUser, staffUser);
+        // デモユーザー
+        UserDetails demoUser = User.builder()
+            .username("demo")
+            .password(passwordEncoder.encode("demo"))
+            .roles("DEMO")
+            .build();
+
+        return new InMemoryUserDetailsManager(
+            adminUser,
+            staffUser,
+            demoUser
+    );
     }
 
     @Bean
