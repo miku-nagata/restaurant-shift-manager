@@ -60,6 +60,14 @@ public class SecurityConfig {
                         .requestMatchers("/required-staff-patterns", "/required-staff-patterns/**")
                         .hasRole("ADMIN")
 
+                        // 定休日は管理者・デモユーザーが閲覧できる
+                        .requestMatchers(HttpMethod.GET, "/regular-holidays")
+                        .hasAnyRole("ADMIN", "DEMO")
+
+                        // 定休日の変更は管理者のみ
+                        .requestMatchers("/regular-holidays", "/regular-holidays/**")
+                        .hasRole("ADMIN")
+
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
