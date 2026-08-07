@@ -21,6 +21,13 @@ public class SecurityConfig {
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**", "/h2-console/**", "/login").permitAll()
+                
+                        // 従業員管理は管理者のみ
+                        .requestMatchers("/employees", "/employees/**").hasRole("ADMIN")
+                        // 必要人数設定は管理者のみ
+                        .requestMatchers("/required-staff", "/required-staff/**").hasRole("ADMIN")
+
+                
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -39,13 +46,21 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+        // 管理者
         UserDetails adminUser = User.builder()
-                .username("admin")
-                .password(passwordEncoder.encode("password"))
-                .roles("ADMIN")
-                .build();
+        .username("admin")
+        .password(passwordEncoder.encode("password"))
+        .roles("ADMIN")
+        .build();
 
-        return new InMemoryUserDetailsManager(adminUser);
+        // 一般スタッフ
+        UserDetails staffUser = User.builder()
+        .username("staff")
+        .password(passwordEncoder.encode("password"))
+        .roles("STAFF")
+        .build();
+
+        return new InMemoryUserDetailsManager(adminUser, staffUser);
     }
 
     @Bean

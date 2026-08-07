@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>スタッフメニュー</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>スタッフメニュー</h1>
+
+        <p>勤務希望の提出や、シフトの確認ができます。</p>
+
+        <div class="quick-actions">
+
+            <a href="/shift-requests" class="quick-action">
+                勤務希望を提出する
+            </a>
+
+            <a href="/my-shift" class="quick-action">
+                自分のシフトを見る
+            </a>
+
+            <a href="/all-shifts" class="quick-action">
+                みんなのシフトを見る
+            </a>
+
+        </div>
+
+        <form action="/logout" method="post">
+            <button type="submit">ログアウト</button>
+        </form>
+
+    </div>
+
+</body>
+
+</html>

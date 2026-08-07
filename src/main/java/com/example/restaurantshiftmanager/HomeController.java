@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.springframework.security.core.Authentication;
 
 // トップページを表示するためのコントローラー
 @Controller
@@ -34,7 +35,15 @@ public class HomeController {
 
     // 「/」にアクセスされたとき、トップページを表示
     @GetMapping("/")
-    public String index(Model model) {
+    public String index(Model model, Authentication authentication) {
+        boolean isAdmin = authentication.getAuthorities()
+        .stream()
+        .anyMatch(authority ->
+                authority.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!isAdmin) {
+            return "staff-index";
+        }
 
         // 日本時間で現在の年月を取得
         YearMonth currentMonth = YearMonth.now(ZoneId.of("Asia/Tokyo"));
