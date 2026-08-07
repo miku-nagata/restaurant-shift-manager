@@ -68,6 +68,14 @@ public class SecurityConfig {
                         .requestMatchers("/regular-holidays", "/regular-holidays/**")
                         .hasRole("ADMIN")
 
+                        // 臨時休業一覧は管理者・デモユーザーが閲覧できる
+                        .requestMatchers(HttpMethod.GET, "/temporary-closures")
+                        .hasAnyRole("ADMIN", "DEMO")
+
+                        // 臨時休業の登録・削除は管理者のみ
+                        .requestMatchers("/temporary-closures", "/temporary-closures/**")
+                        .hasRole("ADMIN")
+
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
