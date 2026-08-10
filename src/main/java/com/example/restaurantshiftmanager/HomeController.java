@@ -23,14 +23,20 @@ public class HomeController {
 
     // 臨時休業日データを取得するためのRepository
     private final TemporaryClosureRepository temporaryClosureRepository;
+    private final RequiredStaffRepository requiredStaffRepository;
+    private final ShiftAssignmentRepository shiftAssignmentRepository;
 
     // コンストラクタ
     // Springが自動でRepositoryを渡してくれる
     public HomeController(
             RegularHolidayRepository regularHolidayRepository,
-            TemporaryClosureRepository temporaryClosureRepository) {
+            TemporaryClosureRepository temporaryClosureRepository,
+            RequiredStaffRepository requiredStaffRepository,
+            ShiftAssignmentRepository shiftAssignmentRepository) {
         this.regularHolidayRepository = regularHolidayRepository;
         this.temporaryClosureRepository = temporaryClosureRepository;
+        this.requiredStaffRepository = requiredStaffRepository;
+        this.shiftAssignmentRepository = shiftAssignmentRepository;
     }
 
     // 「/」にアクセスされたとき、トップページを表示
