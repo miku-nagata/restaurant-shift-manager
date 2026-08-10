@@ -1,0 +1,101 @@
+package com.example.restaurantshiftmanager;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+@Component
+public class DemoDataInitializer implements CommandLineRunner {
+
+    private final EmployeeRepository employeeRepository;
+
+    // Renderの環境変数 DEMO_DATA_INIT の値を受け取る
+    // 設定されていなければ false
+    @Value("${demo.data.init:false}")
+    private boolean demoDataInit;
+
+    public DemoDataInitializer(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
+    }
+
+    @Override
+    public void run(String... args) {
+
+        // デモデータ投入が無効なら何もしない
+        if (!demoDataInit) {
+            return;
+        }
+
+        // すでに登録されている従業員名を取得
+        Set<String> existingNames = employeeRepository.findAll()
+                .stream()
+                .map(Employee::getName)
+                .collect(Collectors.toCollection(HashSet::new));
+
+        // デモ従業員
+        saveIfMissing(
+                existingNames,
+                new Employee("佐藤 美咲", "正社員", "上級",
+                        1300, 176, null)
+        );
+
+        saveIfMissing(
+                existingNames,
+                new Employee("田中 健太", "正社員", "中級",
+                        1250, 176, null)
+        );
+
+        saveIfMissing(
+                existingNames,
+                new Employee("山本 結衣", "パート", "中級",
+                        1100, 100, 100000)
+        );
+
+        saveIfMissing(
+                existingNames,
+                new Employee("松本 彩", "パート", "上級",
+                        1150, 120, 120000)
+        );
+
+        saveIfMissing(
+                existingNames,
+                new Employee("高橋 翔", "アルバイト", "初級",
+                        1050, 80, 80000)
+        );
+
+        saveIfMissing(
+                existingNames,
+                new Employee("小林 葵", "アルバイト", "中級",
+                        1080, 90, 90000)
+        );
+
+        saveIfMissing(
+                existingNames,
+                new Employee("伊藤 蓮", "アルバイト", "初級",
+                        1050, 70, 70000)
+        );
+
+        saveIfMissing(
+                existingNames,
+                new Employee("渡辺 凛", "パート", "中級",
+                        1100, 100, 100000)
+        );
+
+        System.out.println("デモ従業員データの登録が完了しました。");
+    }
+
+    private void saveIfMissing(Set<String> existingNames, Employee employee) {
+
+        // 同じ名前がすでに存在する場合は登録しない
+        if (existingNames.contains(employee.getName())) {
+            return;
+        }
+
+        employeeRepository.save(employee);
+        existingNames.add(employee.getName());
+    }
+}
