@@ -15,7 +15,7 @@ public class DemoDataInitializer implements CommandLineRunner {
 
     // Renderの環境変数 DEMO_DATA_INIT の値を受け取る
     // 設定されていなければ false
-    @Value("${demo.data.init:false}")
+    @Value("${DEMO_DATA_INIT:false}")
     private boolean demoDataInit;
 
     public DemoDataInitializer(EmployeeRepository employeeRepository) {
