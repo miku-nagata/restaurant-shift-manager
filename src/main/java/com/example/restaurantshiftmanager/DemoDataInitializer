@@ -25,10 +25,14 @@ public class DemoDataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
 
+        System.out.println("DEMO_DATA_INIT = " + demoDataInit);
+
         // デモデータ投入が無効なら何もしない
         if (!demoDataInit) {
+            System.out.println("デモデータ投入はOFFです。");
             return;
-        }
+    }
+
 
         // すでに登録されている従業員名を取得
         Set<String> existingNames = employeeRepository.findAll()
