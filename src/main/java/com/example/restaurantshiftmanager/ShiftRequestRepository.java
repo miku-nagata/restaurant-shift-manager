@@ -14,9 +14,15 @@ public interface ShiftRequestRepository extends JpaRepository<ShiftRequest, Long
 
     /**
      * 指定した日付範囲の勤務希望を取得
+     * 
      * @param startDate 取得したい期間の開始日
-     * @param endDate 取得したい期間の終了日
+     * @param endDate   取得したい期間の終了日
      * @return 指定した期間に含まれる勤務希望の一覧
      */
     List<ShiftRequest> findByWorkDateBetween(LocalDate startDate, LocalDate endDate);
+
+    // 同じ従業員・同じ日付の勤務希望が存在するか確認
+    boolean existsByEmployeeAndWorkDate(
+            Employee employee,
+            LocalDate workDate);
 }
