@@ -3,6 +3,7 @@ package com.example.restaurantshiftmanager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -34,7 +35,11 @@ public class HomeController {
 
     // 「/」にアクセスされたとき、トップページを表示
     @GetMapping("/")
-    public String index(Model model, Authentication authentication) {
+    public String index(
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) Integer month,
+            Model model,
+            Authentication authentication) {
         boolean isAdmin = authentication.getAuthorities()
                 .stream()
                 .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN")
@@ -44,8 +49,13 @@ public class HomeController {
             return "staff-index";
         }
 
-        // 日本時間で現在の年月を取得
-        YearMonth currentMonth = YearMonth.now(ZoneId.of("Asia/Tokyo"));
+        YearMonth currentMonth;
+
+        if (year != null && month != null) {
+            currentMonth = YearMonth.of(year, month);
+        } else {
+            currentMonth = YearMonth.now(ZoneId.of("Asia/Tokyo"));
+        }
 
         // 今月の1日を取得
         LocalDate firstDay = currentMonth.atDay(1);
@@ -72,7 +82,7 @@ public class HomeController {
         List<DashboardCalendarDay> calendarDays = new ArrayList<>();
 
         // 月初より前の空白マスを追加
-        // 例：1日が水曜日なら、月・火の2マスを空白
+        // 例：1日が水曜日なら、日・月・火の3マスを空白
         for (int i = 0; i < blankCount; i++) {
             calendarDays.add(DashboardCalendarDay.blank());
         }
@@ -101,10 +111,24 @@ public class HomeController {
             }
         }
 
-        // 画面に「2026年7月」のような表示用文字列を渡す
-        model.addAttribute("yearMonthLabel", currentMonth.getYear() + "年" + currentMonth.getMonthValue() + "月");
+        // 前月・翌月を取得
+        YearMonth previousMonth = currentMonth.minusMonths(1);
+        YearMonth nextMonth = currentMonth.plusMonths(1);
 
-        // 画面にカレンダーの日付一覧を渡す
+        // 画面に表示中の年月を渡す
+        model.addAttribute(
+                "yearMonthLabel",
+                currentMonth.getYear() + "年" + currentMonth.getMonthValue() + "月");
+
+        // 前月の年月を渡す
+        model.addAttribute("previousYear", previousMonth.getYear());
+        model.addAttribute("previousMonth", previousMonth.getMonthValue());
+
+        // 翌月の年月を渡す
+        model.addAttribute("nextYear", nextMonth.getYear());
+        model.addAttribute("nextMonth", nextMonth.getMonthValue());
+
+        // カレンダーの日付一覧を渡す
         model.addAttribute("calendarDays", calendarDays);
 
         // templates/index.html を表示

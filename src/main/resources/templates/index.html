@@ -67,13 +67,23 @@
             </div>
         </section>
 
-        <section class="calendar-section">
+        <section class="calendar-section" id="calendar-section">
             <div class="section-header">
                 <h2 th:text="${yearMonthLabel} + 'のシフト状況'">今月のシフト状況</h2>
                 <div class="month-navigation">
-                    <button type="button">前月</button>
-                    <span>今月</span>
-                    <button type="button">翌月</button>
+
+                    <a th:href="@{/(year=${previousYear}, month=${previousMonth})} + '#calendar-section'">
+                        前月
+                    </a>
+
+                    <a href="/#calendar-section">
+                        今月
+                    </a>
+
+                    <a th:href="@{/(year=${nextYear}, month=${nextMonth})} + '#calendar-section'">
+                        翌月
+                    </a>
+
                 </div>
             </div>
 
