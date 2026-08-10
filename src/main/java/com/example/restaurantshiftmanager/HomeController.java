@@ -27,8 +27,7 @@ public class HomeController {
     // Springが自動でRepositoryを渡してくれる
     public HomeController(
             RegularHolidayRepository regularHolidayRepository,
-            TemporaryClosureRepository temporaryClosureRepository
-    ) {
+            TemporaryClosureRepository temporaryClosureRepository) {
         this.regularHolidayRepository = regularHolidayRepository;
         this.temporaryClosureRepository = temporaryClosureRepository;
     }
@@ -37,10 +36,9 @@ public class HomeController {
     @GetMapping("/")
     public String index(Model model, Authentication authentication) {
         boolean isAdmin = authentication.getAuthorities()
-        .stream()
-        .anyMatch(authority ->
-                authority.getAuthority().equals("ROLE_ADMIN")
-                || authority.getAuthority().equals("ROLE_DEMO"));
+                .stream()
+                .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN")
+                        || authority.getAuthority().equals("ROLE_DEMO"));
 
         if (!isAdmin) {
             return "staff-index";
@@ -53,8 +51,8 @@ public class HomeController {
         LocalDate firstDay = currentMonth.atDay(1);
 
         // JavaのDayOfWeekでは、月曜日が1、日曜日が7
-        // 月曜始まりのカレンダーにするため、月初より前に必要な空白マスの数を計算
-        int blankCount = firstDay.getDayOfWeek().getValue() - 1;
+        // 日曜始まりのカレンダーにするため、月初より前に必要な空白マスの数を計算
+        int blankCount = firstDay.getDayOfWeek().getValue() % 7;
 
         // 登録済みの定休日を取得
         // 例：月曜日が定休日なら 1、火曜日なら 2
