@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -84,6 +85,10 @@ public class HomeController {
                 .map(TemporaryClosure::getClosureDate)
                 .collect(Collectors.toSet());
 
+        List<RequiredStaff> requiredStaffList = requiredStaffRepository.findAll();
+
+        List<ShiftAssignment> shiftAssignments = shiftAssignmentRepository.findAll();
+
         // カレンダーに表示する1日分のデータを入れるリスト
         List<DashboardCalendarDay> calendarDays = new ArrayList<>();
 
@@ -113,7 +118,37 @@ public class HomeController {
 
                 // 休業日ではない通常営業日
             } else {
-                calendarDays.add(DashboardCalendarDay.of(date, "未作成", "status-warning"));
+
+                boolean hasAssignment = shiftAssignments.stream()
+                        .anyMatch(assignment -> assignment.getWorkDate().equals(date));
+
+                if (!hasAssignment) {
+
+                    calendarDays.add(
+                            DashboardCalendarDay.of(
+                                    date,
+                                    "未作成",
+                                    "status-warning"));
+
+                } else if (hasShortage(
+                        date,
+                        requiredStaffList,
+                        shiftAssignments)) {
+
+                    calendarDays.add(
+                            DashboardCalendarDay.of(
+                                    date,
+                                    "不足あり",
+                                    "status-shortage"));
+
+                } else {
+
+                    calendarDays.add(
+                            DashboardCalendarDay.of(
+                                    date,
+                                    "確認済み",
+                                    "status-ok"));
+                }
             }
         }
 
@@ -139,5 +174,56 @@ public class HomeController {
 
         // templates/index.html を表示
         return "index";
+    }
+
+    // 不足があるか確認する
+    private boolean hasShortage(
+            LocalDate date,
+            List<RequiredStaff> requiredStaffList,
+            List<ShiftAssignment> shiftAssignments) {
+
+        // この日の必要人数設定だけ取得
+        List<RequiredStaff> dailyRequiredStaff = requiredStaffList.stream()
+                .filter(requiredStaff -> requiredStaff.getWorkDate().equals(date))
+                .toList();
+
+        for (RequiredStaff requiredStaff : dailyRequiredStaff) {
+
+            LocalTime slotStart = requiredStaff.getStartTime();
+
+            // 必要人数を30分単位で確認
+            while (slotStart.isBefore(requiredStaff.getEndTime())) {
+
+                LocalTime slotEnd = slotStart.plusMinutes(30);
+
+                if (slotEnd.isAfter(requiredStaff.getEndTime())) {
+                    slotEnd = requiredStaff.getEndTime();
+                }
+
+                int assignedCount = 0;
+
+                for (ShiftAssignment assignment : shiftAssignments) {
+
+                    boolean sameDate = assignment.getWorkDate().equals(date);
+
+                    boolean coversStart = !assignment.getStartTime().isAfter(slotStart);
+
+                    boolean coversEnd = !assignment.getEndTime().isBefore(slotEnd);
+
+                    if (sameDate && coversStart && coversEnd) {
+                        assignedCount++;
+                    }
+                }
+
+                // 必要人数より作成済みシフトが少なければ不足
+                if (assignedCount < requiredStaff.getRequiredCount()) {
+                    return true;
+                }
+
+                slotStart = slotEnd;
+            }
+        }
+
+        return false;
     }
 }
