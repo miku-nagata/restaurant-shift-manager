@@ -29,6 +29,18 @@
             </form>
         </div>
 
+        <section sec:authorize="hasRole('DEMO')" class="demo-guide">
+            <h2>デモの見方</h2>
+        
+            <p>
+                主要な機能を、実際のシフト管理の流れに沿ってご覧いただけます。
+            </p>
+        
+            <a href="/shift-requests" class="action-button primary">
+                チュートリアルを開始
+            </a>
+        </section>
+
         <section class="quick-actions">
             <h2>従業員向けの操作</h2>
             <div class="action-buttons">
