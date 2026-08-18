@@ -173,6 +173,14 @@
     <script>
         function showShiftRequests(button) {
 
+            // すべての日付から選択状態を外す
+            document.querySelectorAll('.clickable-day').forEach(day => {
+                day.classList.remove('selected-day');
+            });
+
+            // クリックした日を選択状態にする
+            button.classList.add('selected-day');
+
             // クリックされた日付を取得
             const date = button.dataset.date;
 

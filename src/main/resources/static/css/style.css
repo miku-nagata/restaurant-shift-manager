@@ -1401,4 +1401,67 @@ main {
     }
 }
 
+/* ==============================
+   勤務希望一覧：カレンダー
+   ============================== */
 
+/* 勤務希望カレンダーの日付マス */
+.shift-request-calendar-day {
+    width: 100%;
+    height: 100%;
+    min-height: 90px;
+    padding: 10px;
+
+    background-color: #ffffff;
+    color: #222;
+
+    border: none;
+    border-radius: 8px;
+
+    text-align: left;
+    box-sizing: border-box;
+}
+
+/* 勤務希望が登録されている、クリック可能な日 */
+button.shift-request-calendar-day.clickable-day {
+    width: 100%;
+    height: 100%;
+
+    background-color: #eff6ff;
+    color: #1f2937;
+
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+
+    cursor: pointer;
+}
+
+/* マウスを乗せたとき */
+button.shift-request-calendar-day.clickable-day:hover {
+    background-color: #dbeafe;
+}
+
+/* 日付 */
+.shift-request-calendar-day .calendar-date {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+/* 件数 */
+.shift-request-calendar-day .calendar-status {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2563eb;
+}
+
+/* 0件は少し薄くする */
+.shift-request-calendar-day:not(.clickable-day) .calendar-status {
+    color: #9ca3af;
+}
+
+/* 現在選択している日 */
+button.shift-request-calendar-day.selected-day {
+    border: 2px solid #2563eb;
+    background-color: #dbeafe;
+}
