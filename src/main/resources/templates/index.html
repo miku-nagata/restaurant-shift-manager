@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>飲食店向けシフト管理システム</title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intro.js@8.3.2/minified/introjs.min.css">
 </head>
 
 <body>
@@ -31,14 +32,14 @@
 
         <section sec:authorize="hasRole('DEMO')" class="demo-guide">
             <h2>デモの見方</h2>
-        
+
             <p>
                 主要な機能を、実際のシフト管理の流れに沿ってご覧いただけます。
             </p>
-        
-            <a href="/shift-requests" class="action-button primary">
+
+            <button type="button" class="action-button primary" onclick="startTutorial()">
                 チュートリアルを開始
-            </a>
+            </button>
         </section>
 
         <section class="quick-actions">
@@ -173,7 +174,7 @@
                     <p>必要人数に対して人員が足りているか確認します。</p>
                 </a>
 
-                <a href="/required-staff-patterns" class="menu-card">
+                <a href="/required-staff-patterns" class="action-button" id="tutorial-required-staff">
                     <h3>曜日別必要人数パターン</h3>
                     <p>曜日ごとの基本的な必要人数を登録します。</p>
                 </a>
@@ -203,6 +204,28 @@
         </section>
 
     </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/intro.js@8.3.2/minified/intro.min.js"></script>
+
+    <script>
+        function startTutorial() {
+            introJs.tour().setOptions({
+                steps: [
+                    {
+                        element: document.querySelector('#tutorial-required-staff'),
+                        title: 'STEP 1',
+                        intro: 'まず、曜日・時間帯ごとの必要人数を確認してみましょう。'
+                    }
+                ],
+                nextLabel: '次へ',
+                prevLabel: '戻る',
+                doneLabel: '完了'
+            }).start();
+        }
+    </script>
+
 </body>
 
 </html>
