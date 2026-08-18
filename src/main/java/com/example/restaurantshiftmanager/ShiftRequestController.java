@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
+import java.util.LinkedHashMap;
 import java.time.YearMonth;
 
 @Controller
@@ -54,12 +56,21 @@ public class ShiftRequestController {
                                 .filter(request -> !request.getWorkDate().isBefore(startDate)
                                                 && !request.getWorkDate().isAfter(endDate))
                                 .toList();
+                // 勤務希望を日付ごとにまとめる
+                Map<LocalDate, List<ShiftRequest>> shiftRequestsByDate = shiftRequests.stream()
+                                .sorted((a, b) -> a.getWorkDate().compareTo(b.getWorkDate()))
+                                .collect(
+                                                java.util.stream.Collectors.groupingBy(
+                                                                ShiftRequest::getWorkDate,
+                                                                LinkedHashMap::new,
+                                                                java.util.stream.Collectors.toList()));
 
                 // 前月・翌月
                 YearMonth previousMonth = targetMonth.minusMonths(1);
                 YearMonth nextMonth = targetMonth.plusMonths(1);
 
                 model.addAttribute("shiftRequests", shiftRequests);
+                model.addAttribute("shiftRequestsByDate", shiftRequestsByDate);
                 model.addAttribute("targetMonth", targetMonth);
 
                 model.addAttribute("previousYear", previousMonth.getYear());

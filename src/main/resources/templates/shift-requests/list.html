@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 
 <head>
     <meta charset="UTF-8">
@@ -43,40 +44,70 @@
             <a href="/shift-requests/new">勤務希望を新規登録する</a>
         </p>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>従業員名</th>
-                    <th>日付</th>
-                    <th>開始時刻</th>
-                    <th>終了時刻</th>
-                    <th>希望区分</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:if="${#lists.isEmpty(shiftRequests)}">
-                    <td colspan="6">この月の勤務希望はありません。</td>
-                </tr>
-                <tr th:each="shiftRequest : ${shiftRequests}">
-                    <td th:text="${shiftRequest.employee.name}">山田 太郎</td>
-                    <td th:text="${shiftRequest.workDate}">2026-07-01</td>
-                    <td th:text="${shiftRequest.startTime}">10:00</td>
-                    <td th:text="${shiftRequest.endTime}">14:00</td>
-                    <td th:text="${shiftRequest.requestType}">出勤希望</td>
-                    <td>
-                        <a th:href="@{/shift-requests/{id}/edit(id=${shiftRequest.id})}">編集</a>
+        <div class="shift-request-groups">
 
-                        <form th:action="@{/shift-requests/{id}/delete(id=${shiftRequest.id})}" method="post"
-                            style="display:inline;">
-                            <button type="submit" class="danger-button" onclick="return confirm('この勤務希望を削除しますか？');">
-                                削除
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+            <!-- 勤務希望が1件もない場合 -->
+            <p th:if="${#maps.isEmpty(shiftRequestsByDate)}">
+                この月の勤務希望はありません。
+            </p>
+
+            <!-- 日付ごとに表示 -->
+            <details th:each="entry : ${shiftRequestsByDate}" class="shift-request-day">
+
+                <summary>
+                    <strong th:text="${entry.key}">2026-08-01</strong>
+                    <span th:text="${entry.value.size()} + '件'">5件</span>
+                </summary>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>従業員名</th>
+                            <th>開始時刻</th>
+                            <th>終了時刻</th>
+                            <th>希望区分</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr th:each="shiftRequest : ${entry.value}">
+                            <td th:text="${shiftRequest.employee.name}">
+                                山田 太郎
+                            </td>
+
+                            <td th:text="${shiftRequest.startTime != null ? shiftRequest.startTime : '-'}">
+                                10:00
+                            </td>
+
+                            <td th:text="${shiftRequest.endTime != null ? shiftRequest.endTime : '-'}">
+                                14:00
+                            </td>
+
+                            <td th:text="${shiftRequest.requestType}">
+                                出勤希望
+                            </td>
+
+                            <td>
+                                <a th:href="@{/shift-requests/{id}/edit(id=${shiftRequest.id})}">
+                                    編集
+                                </a>
+
+                                <form th:action="@{/shift-requests/{id}/delete(id=${shiftRequest.id})}" method="post"
+                                    style="display:inline;">
+                                    <button type="submit" class="danger-button"
+                                        onclick="return confirm('この勤務希望を削除しますか？');">
+                                        削除
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </details>
+
+        </div>
 
         <p>
             <a href="/">トップページへ戻る</a>
