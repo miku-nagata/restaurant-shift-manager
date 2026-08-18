@@ -44,70 +44,43 @@
             <a href="/shift-requests/new">勤務希望を新規登録する</a>
         </p>
 
-        <div class="shift-request-groups">
+        <table class="calendar-table">
+            <thead>
+                <tr>
+                    <th>日</th>
+                    <th>月</th>
+                    <th>火</th>
+                    <th>水</th>
+                    <th>木</th>
+                    <th>金</th>
+                    <th>土</th>
+                </tr>
+            </thead>
 
-            <!-- 勤務希望が1件もない場合 -->
-            <p th:if="${#maps.isEmpty(shiftRequestsByDate)}">
-                この月の勤務希望はありません。
-            </p>
+            <tbody>
+                <tr th:each="week : ${calendarWeeks}">
 
-            <!-- 日付ごとに表示 -->
-            <details th:each="entry : ${shiftRequestsByDate}" class="shift-request-day">
+                    <td th:each="date : ${week}">
+                        <div th:if="${date != null}" class="calendar-day shift-request-calendar-day">
 
-                <summary>
-                    <strong th:text="${entry.key}">2026-08-01</strong>
-                    <span th:text="${entry.value.size()} + '件'">5件</span>
-                </summary>
+                            <!-- 日付 -->
+                            <div class="calendar-date" th:text="${date.dayOfMonth}">
+                                1
+                            </div>
 
-                <table>
-                    <thead>
-                        <tr>
-                            <th>従業員名</th>
-                            <th>開始時刻</th>
-                            <th>終了時刻</th>
-                            <th>希望区分</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
+                            <!-- その日の勤務希望件数 -->
+                            <div class="calendar-status" th:text="${shiftRequestsByDate.containsKey(date)
+                                      ? shiftRequestsByDate.get(date).size() + '件'
+                                      : '0件'}">
+                                0件
+                            </div>
 
-                    <tbody>
-                        <tr th:each="shiftRequest : ${entry.value}">
-                            <td th:text="${shiftRequest.employee.name}">
-                                山田 太郎
-                            </td>
+                        </div>
+                    </td>
 
-                            <td th:text="${shiftRequest.startTime != null ? shiftRequest.startTime : '-'}">
-                                10:00
-                            </td>
-
-                            <td th:text="${shiftRequest.endTime != null ? shiftRequest.endTime : '-'}">
-                                14:00
-                            </td>
-
-                            <td th:text="${shiftRequest.requestType}">
-                                出勤希望
-                            </td>
-
-                            <td>
-                                <a th:href="@{/shift-requests/{id}/edit(id=${shiftRequest.id})}">
-                                    編集
-                                </a>
-
-                                <form th:action="@{/shift-requests/{id}/delete(id=${shiftRequest.id})}" method="post"
-                                    style="display:inline;">
-                                    <button type="submit" class="danger-button"
-                                        onclick="return confirm('この勤務希望を削除しますか？');">
-                                        削除
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-
-            </details>
-
-        </div>
+                </tr>
+            </tbody>
+        </table>
 
         <p>
             <a href="/">トップページへ戻る</a>

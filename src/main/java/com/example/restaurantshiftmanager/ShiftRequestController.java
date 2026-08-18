@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.LinkedHashMap;
 import java.time.YearMonth;
+import java.util.ArrayList;
 
 @Controller
 public class ShiftRequestController {
@@ -65,12 +66,53 @@ public class ShiftRequestController {
                                                                 LinkedHashMap::new,
                                                                 java.util.stream.Collectors.toList()));
 
+                // カレンダー表示用に1か月分の日付を週ごとにまとめる
+                List<List<LocalDate>> calendarWeeks = new ArrayList<>();
+
+                // 月初の日付
+                LocalDate firstDay = targetMonth.atDay(1);
+
+                // 日曜始まりになるように、月初より前の空白数を求める
+                int blankCount = firstDay.getDayOfWeek().getValue() % 7;
+
+                List<LocalDate> week = new ArrayList<>();
+
+                // 月初より前を空白にする
+                for (int i = 0; i < blankCount; i++) {
+                        week.add(null);
+                }
+
+                // 1日から月末まで追加する
+                for (int day = 1; day <= targetMonth.lengthOfMonth(); day++) {
+
+                        LocalDate date = targetMonth.atDay(day);
+
+                        week.add(date);
+
+                        // 7日たまったら1週間として追加
+                        if (week.size() == 7) {
+                                calendarWeeks.add(week);
+                                week = new ArrayList<>();
+                        }
+                }
+
+                // 最後の週を空白で7日まで埋める
+                if (!week.isEmpty()) {
+
+                        while (week.size() < 7) {
+                                week.add(null);
+                        }
+
+                        calendarWeeks.add(week);
+                }
+
                 // 前月・翌月
                 YearMonth previousMonth = targetMonth.minusMonths(1);
                 YearMonth nextMonth = targetMonth.plusMonths(1);
 
                 model.addAttribute("shiftRequests", shiftRequests);
                 model.addAttribute("shiftRequestsByDate", shiftRequestsByDate);
+                model.addAttribute("calendarWeeks", calendarWeeks);
                 model.addAttribute("targetMonth", targetMonth);
 
                 model.addAttribute("previousYear", previousMonth.getYear());
