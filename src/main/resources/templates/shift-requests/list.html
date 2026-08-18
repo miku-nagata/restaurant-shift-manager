@@ -61,31 +61,139 @@
                 <tr th:each="week : ${calendarWeeks}">
 
                     <td th:each="date : ${week}">
-                        <div th:if="${date != null}" class="calendar-day shift-request-calendar-day">
 
-                            <!-- 日付 -->
+                        <!-- 勤務希望が1件以上ある日 -->
+                        <button th:if="${date != null and shiftRequestsByDate.containsKey(date)}" type="button"
+                            class="calendar-day shift-request-calendar-day clickable-day" th:attr="data-date=${date}"
+                            onclick="showShiftRequests(this)">
+
                             <div class="calendar-date" th:text="${date.dayOfMonth}">
                                 1
                             </div>
 
-                            <!-- その日の勤務希望件数 -->
-                            <div class="calendar-status" th:text="${shiftRequestsByDate.containsKey(date)
-                                      ? shiftRequestsByDate.get(date).size() + '件'
-                                      : '0件'}">
+                            <div class="calendar-status" th:text="${shiftRequestsByDate.get(date).size()} + '件'">
+                                3件
+                            </div>
+
+                        </button>
+
+                        <!-- 勤務希望が0件の日 -->
+                        <div th:if="${date != null and !shiftRequestsByDate.containsKey(date)}"
+                            class="calendar-day shift-request-calendar-day">
+
+                            <div class="calendar-date" th:text="${date.dayOfMonth}">
+                                1
+                            </div>
+
+                            <div class="calendar-status">
                                 0件
                             </div>
 
                         </div>
+
                     </td>
 
                 </tr>
             </tbody>
         </table>
 
+        <div class="shift-request-details">
+
+            <div th:each="entry : ${shiftRequestsByDate}" class="shift-request-detail"
+                th:id="'requests-' + ${entry.key}" style="display: none;">
+
+                <h2>
+                    <span th:text="${entry.key.monthValue}">8</span>月
+                    <span th:text="${entry.key.dayOfMonth}">6</span>日の勤務希望
+                </h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>従業員名</th>
+                            <th>開始時刻</th>
+                            <th>終了時刻</th>
+                            <th>希望区分</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr th:each="shiftRequest : ${entry.value}">
+
+                            <td th:text="${shiftRequest.employee.name}">
+                                山田 太郎
+                            </td>
+
+                            <td th:text="${shiftRequest.startTime != null
+                                      ? shiftRequest.startTime
+                                      : '-'}">
+                                09:00
+                            </td>
+
+                            <td th:text="${shiftRequest.endTime != null
+                                      ? shiftRequest.endTime
+                                      : '-'}">
+                                17:00
+                            </td>
+
+                            <td th:text="${shiftRequest.requestType}">
+                                出勤希望
+                            </td>
+
+                            <td>
+                                <a th:href="@{/shift-requests/{id}/edit(id=${shiftRequest.id})}">
+                                    編集
+                                </a>
+
+                                <form th:action="@{/shift-requests/{id}/delete(id=${shiftRequest.id})}" method="post"
+                                    style="display:inline;">
+
+                                    <button type="submit" class="danger-button"
+                                        onclick="return confirm('この勤務希望を削除しますか？');">
+                                        削除
+                                    </button>
+
+                                </form>
+                            </td>
+
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+
         <p>
             <a href="/">トップページへ戻る</a>
         </p>
     </div>
+
+    <script>
+        function showShiftRequests(button) {
+
+            // クリックされた日付を取得
+            const date = button.dataset.date;
+
+            // いったん全日の詳細を非表示にする
+            const details =
+                document.querySelectorAll('.shift-request-detail');
+
+            details.forEach(detail => {
+                detail.style.display = 'none';
+            });
+
+            // クリックされた日の詳細を取得
+            const selected =
+                document.getElementById('requests-' + date);
+
+            // その日の詳細だけ表示
+            if (selected) {
+                selected.style.display = 'block';
+            }
+        }
+    </script>
 </body>
 
 </html>
