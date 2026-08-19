@@ -203,6 +203,15 @@
                     exitOnOverlayClick: true
                 });
 
+                tour.onComplete(function () {
+
+                    // 次はSTEP3
+                    sessionStorage.setItem('tutorialStep', '3');
+
+                    // トップページへ戻る
+                    window.location.href = '/';
+                });
+
                 tour.start();
             }
         });
