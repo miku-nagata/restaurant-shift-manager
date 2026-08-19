@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>必要人数パターン一覧</title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intro.js@8.3.2/minified/introjs.min.css">
 </head>
 
 <body>
@@ -31,7 +32,9 @@
 
         <h2>曜日・時間帯別の必要人数</h2>
 
-        <table>
+        <h2>曜日・時間帯別の必要人数</h2>
+
+        <table id="tutorial-pattern-table">
             <thead>
                 <tr>
                     <th>時間帯</th>
@@ -175,6 +178,37 @@
             <a href="/">トップページへ戻る</a>
         </p>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/intro.js@8.3.2/minified/intro.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const tutorialStep = sessionStorage.getItem('tutorialStep');
+
+            if (tutorialStep === '2') {
+
+                // 一度読み取ったら削除する
+                sessionStorage.removeItem('tutorialStep');
+
+                const tour = introJs.tour();
+
+                tour.setOptions({
+                    steps: [
+                        {
+                            element: document.querySelector('#tutorial-pattern-table'),
+                            title: 'STEP 2',
+                            intro: 'ここでは、曜日・時間帯ごとに必要な人数を確認できます。'
+                        }
+                    ],
+                    doneLabel: '次へ',
+                    exitOnEsc: true,
+                    exitOnOverlayClick: true
+                });
+
+                tour.start();
+            }
+        });
+    </script>
 </body>
 
 </html>

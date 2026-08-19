@@ -213,7 +213,10 @@
 
     <script>
         function startTutorial() {
-            introJs.tour().setOptions({
+
+            const tour = introJs.tour();
+
+            tour.setOptions({
                 steps: [
                     {
                         element: document.querySelector('#tutorial-required-staff'),
@@ -223,8 +226,22 @@
                 ],
                 nextLabel: '次へ',
                 prevLabel: '戻る',
-                doneLabel: '完了'
-            }).start();
+
+                // 今はSTEP1しかないので、最後のボタンがdoneLabelになる
+                doneLabel: '次へ'
+            });
+
+            // STEP1の「次へ」を押したとき
+            tour.onComplete(function () {
+
+                // 次はSTEP2だとブラウザに覚えておく
+                sessionStorage.setItem('tutorialStep', '2');
+
+                // 必要人数パターン画面へ移動
+                window.location.href = '/required-staff-patterns';
+            });
+
+            tour.start();
         }
     </script>
 
