@@ -216,7 +216,9 @@
                     // 次はSTEP6
                     sessionStorage.setItem('tutorialStep', '6');
 
-                    startDayTutorial();
+                    setTimeout(function () {
+                        startDayTutorial();
+                    }, 300);
                 });
 
                 tour.start();
@@ -321,30 +323,32 @@
                 }
 
                 // STEP7
-                const detailTour = introJs.tour();
+                setTimeout(function () {
+                    const detailTour = introJs.tour();
 
-                detailTour.setOptions({
-                    steps: [
-                        {
-                            element: selected,
-                            title: 'STEP 7',
-                            intro: 'ここで、その日に出勤できるスタッフと希望時間を確認できます。'
-                        }
-                    ],
-                    doneLabel: '完了',
-                    exitOnEsc: true,
-                    exitOnOverlayClick: true
-                });
+                    detailTour.setOptions({
+                        steps: [
+                            {
+                                element: selected,
+                                title: 'STEP 7',
+                                intro: 'ここで、その日に出勤できるスタッフと希望時間を確認できます。'
+                            }
+                        ],
+                        doneLabel: '完了',
+                        exitOnEsc: true,
+                        exitOnOverlayClick: true
+                    });
 
-                detailTour.onComplete(function () {
-                    sessionStorage.removeItem('tutorialStep');
-                });
+                    detailTour.onComplete(function () {
+                        sessionStorage.removeItem('tutorialStep');
+                    });
 
-                detailTour.onExit(function () {
-                    sessionStorage.removeItem('tutorialStep');
-                });
+                    detailTour.onExit(function () {
+                        sessionStorage.removeItem('tutorialStep');
+                    });
 
-                detailTour.start();
+                    detailTour.start();
+                }, 300);
             }
         }
     </script>
