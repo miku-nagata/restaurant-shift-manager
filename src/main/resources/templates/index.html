@@ -224,20 +224,14 @@
                         intro: 'まず、曜日・時間帯ごとの必要人数を確認してみましょう。'
                     }
                 ],
-                nextLabel: '次へ',
-                prevLabel: '戻る',
-
-                // 今はSTEP1しかないので、最後のボタンがdoneLabelになる
-                doneLabel: '次へ'
+                doneLabel: '次へ',
+                exitOnEsc: true,
+                exitOnOverlayClick: true,
+                disableInteraction: true
             });
 
-            // STEP1の「次へ」を押したとき
             tour.onComplete(function () {
-
-                // 次はSTEP2だとブラウザに覚えておく
                 sessionStorage.setItem('tutorialStep', '2');
-
-                // 必要人数パターン画面へ移動
                 window.location.href = '/required-staff-patterns';
             });
 
@@ -249,6 +243,7 @@
 
             if (tutorialStep === '3') {
 
+                // STEP3を開始したので、保存していた値はいったん消す
                 sessionStorage.removeItem('tutorialStep');
 
                 const tour = introJs.tour();
@@ -258,12 +253,13 @@
                         {
                             element: document.querySelector('#tutorial-shift-request'),
                             title: 'STEP 3',
-                            intro: '次にスタッフ向け機能です。スタッフはここから勤務希望を提出します。'
+                            intro: 'スタッフはここから、出勤できる日や時間帯を勤務希望として提出できます。'
                         }
                     ],
                     doneLabel: '次へ',
                     exitOnEsc: true,
-                    exitOnOverlayClick: true
+                    exitOnOverlayClick: true,
+                    disableInteraction: true
                 });
 
                 tour.onComplete(function () {
@@ -274,6 +270,7 @@
                 tour.start();
             }
         });
+
     </script>
 
 </body>

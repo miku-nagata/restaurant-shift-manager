@@ -185,9 +185,6 @@
 
             if (tutorialStep === '2') {
 
-                // 一度読み取ったら削除する
-                sessionStorage.removeItem('tutorialStep');
-
                 const tour = introJs.tour();
 
                 tour.setOptions({
@@ -198,23 +195,21 @@
                             intro: 'ここでは、曜日・時間帯ごとに必要な人数を確認できます。'
                         }
                     ],
-                    doneLabel: '次へ',
+                    doneLabel: '完了',
                     exitOnEsc: true,
                     exitOnOverlayClick: true
                 });
 
                 tour.onComplete(function () {
-
-                    // 次はSTEP3
                     sessionStorage.setItem('tutorialStep', '3');
-
-                    // トップページへ戻る
                     window.location.href = '/';
                 });
 
                 tour.start();
             }
         });
+
+
     </script>
 </body>
 

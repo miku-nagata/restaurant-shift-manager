@@ -18,6 +18,7 @@
         }
     </style>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intro.js@8.3.2/minified/introjs.min.css">
 </head>
 
 <body>
@@ -41,10 +42,12 @@
         </div>
 
         <p>
-            <a href="/shift-requests/new">勤務希望を新規登録する</a>
+            <a href="/shift-requests/new" id="tutorial-new-shift-request">
+                勤務希望を新規登録する
+            </a>
         </p>
 
-        <table class="calendar-table">
+        <table class="calendar-table" id="tutorial-shift-calendar">
             <thead>
                 <tr>
                     <th>日</th>
@@ -170,7 +173,106 @@
         </p>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/intro.js@8.3.2/minified/intro.min.js"></script>
     <script>
+        let dayTutorial = null;
+        let tutorialDayClicked = false;
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const tutorialStep = sessionStorage.getItem('tutorialStep');
+
+            // STEP4から勤務希望画面に来た場合
+            if (tutorialStep === '4') {
+
+                const tour = introJs.tour();
+
+                tour.setOptions({
+                    steps: [
+                        {
+                            element: document.querySelector('#tutorial-new-shift-request'),
+                            title: 'STEP 4',
+                            intro: '勤務希望の新規登録はこちらから行います。'
+                        },
+                        {
+                            element: document.querySelector('#tutorial-shift-calendar'),
+                            title: 'STEP 5',
+                            intro: '提出された勤務希望は、カレンダーに日付ごとの件数で表示されます。'
+                        }
+                    ],
+                    nextLabel: '次へ',
+                    prevLabel: '戻る',
+                    doneLabel: '次へ',
+
+                    // 紹介中はリンクなどをクリックさせない
+                    disableInteraction: true,
+
+                    exitOnEsc: true,
+                    exitOnOverlayClick: true
+                });
+
+                tour.onComplete(function () {
+
+                    // 次はSTEP6
+                    sessionStorage.setItem('tutorialStep', '6');
+
+                    startDayTutorial();
+                });
+
+                tour.start();
+            }
+        });
+
+
+        // STEP6
+        // 実際にカレンダーの日付をクリックしてもらう
+        function startDayTutorial() {
+
+            const firstClickableDay =
+                document.querySelector('.clickable-day');
+
+            if (!firstClickableDay) {
+                sessionStorage.removeItem('tutorialStep');
+                return;
+            }
+
+            tutorialDayClicked = false;
+
+            dayTutorial = introJs.tour();
+
+            dayTutorial.setOptions({
+                steps: [
+                    {
+                        element: firstClickableDay,
+                        title: 'STEP 6',
+                        intro: '勤務希望が登録されている日をクリックしてみてください。'
+                    }
+                ],
+
+                // 「次へ」は出さない
+                showButtons: false,
+
+                exitOnEsc: true,
+                exitOnOverlayClick: true,
+
+                // 日付は実際にクリックできる
+                disableInteraction: false
+            });
+
+            dayTutorial.onExit(function () {
+
+                // 日付クリックによる終了ではなく、
+                // ユーザーが途中終了した場合だけ状態を消す
+                if (!tutorialDayClicked) {
+                    sessionStorage.removeItem('tutorialStep');
+                }
+            });
+
+            dayTutorial.start();
+        }
+
+
+        // もともとある日付クリック処理
         function showShiftRequests(button) {
 
             // すべての日付から選択状態を外す
@@ -184,7 +286,7 @@
             // クリックされた日付を取得
             const date = button.dataset.date;
 
-            // いったん全日の詳細を非表示にする
+            // 全日の詳細を一度非表示
             const details =
                 document.querySelectorAll('.shift-request-detail');
 
@@ -199,6 +301,50 @@
             // その日の詳細だけ表示
             if (selected) {
                 selected.style.display = 'block';
+            }
+
+
+            // STEP6中に日付がクリックされた場合
+            if (
+                sessionStorage.getItem('tutorialStep') === '6'
+                && selected
+            ) {
+
+                tutorialDayClicked = true;
+
+                // 次はSTEP7
+                sessionStorage.setItem('tutorialStep', '7');
+
+                // STEP6を閉じる
+                if (dayTutorial) {
+                    dayTutorial.exit();
+                }
+
+                // STEP7
+                const detailTour = introJs.tour();
+
+                detailTour.setOptions({
+                    steps: [
+                        {
+                            element: selected,
+                            title: 'STEP 7',
+                            intro: 'ここで、その日に出勤できるスタッフと希望時間を確認できます。'
+                        }
+                    ],
+                    doneLabel: '完了',
+                    exitOnEsc: true,
+                    exitOnOverlayClick: true
+                });
+
+                detailTour.onComplete(function () {
+                    sessionStorage.removeItem('tutorialStep');
+                });
+
+                detailTour.onExit(function () {
+                    sessionStorage.removeItem('tutorialStep');
+                });
+
+                detailTour.start();
             }
         }
     </script>
