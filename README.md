@@ -50,8 +50,8 @@ https://restaurant-shift-manager.onrender.com
 
 | 項目 | 内容 |
 |---|---|
-| ユーザー名 | admin |
-| パスワード | password |
+| ユーザー名 | demo |
+| パスワード | demo |
 
 ※ ポートフォリオ確認用のデモアカウントです。
 
