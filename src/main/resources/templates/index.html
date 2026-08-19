@@ -43,9 +43,11 @@
         </section>
 
         <section class="quick-actions">
-            <h2>従業員向けの操作</h2>
+            <h2>スタッフ向けの機能</h2>
             <div class="action-buttons">
-                <a href="/shift-requests" class="action-button primary">勤務希望を提出する</a>
+                <a href="/shift-requests" class="action-button primary" id="tutorial-shift-request">
+                    勤務希望を提出する
+                </a>
                 <a href="/my-shifts" class="action-button">自分のシフトを見る</a>
                 <a href="/all-shifts" class="action-button">みんなのシフトを見る</a>
             </div>
@@ -207,8 +209,6 @@
 
     </div>
 
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/intro.js@8.3.2/minified/intro.min.js"></script>
 
     <script>
@@ -243,6 +243,37 @@
 
             tour.start();
         }
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const tutorialStep = sessionStorage.getItem('tutorialStep');
+
+            if (tutorialStep === '3') {
+
+                sessionStorage.removeItem('tutorialStep');
+
+                const tour = introJs.tour();
+
+                tour.setOptions({
+                    steps: [
+                        {
+                            element: document.querySelector('#tutorial-shift-request'),
+                            title: 'STEP 3',
+                            intro: '次にスタッフ向け機能です。スタッフはここから勤務希望を提出します。'
+                        }
+                    ],
+                    doneLabel: '次へ',
+                    exitOnEsc: true,
+                    exitOnOverlayClick: true
+                });
+
+                tour.onComplete(function () {
+                    sessionStorage.setItem('tutorialStep', '4');
+                    window.location.href = '/shift-requests';
+                });
+
+                tour.start();
+            }
+        });
     </script>
 
 </body>
