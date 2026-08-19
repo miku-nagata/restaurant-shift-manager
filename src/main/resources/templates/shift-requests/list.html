@@ -334,13 +334,22 @@
                                 intro: 'ここで、その日に出勤できるスタッフと希望時間を確認できます。'
                             }
                         ],
-                        doneLabel: '完了',
+                        doneLabel: '次へ',
                         exitOnEsc: true,
                         exitOnOverlayClick: true
                     });
-
                     detailTour.onComplete(function () {
-                        sessionStorage.removeItem('tutorialStep');
+
+                        console.log('STEP7の次へが押されました');
+
+                        sessionStorage.setItem('tutorialStep', '8');
+
+                        console.log(
+                            'tutorialStep =',
+                            sessionStorage.getItem('tutorialStep')
+                        );
+
+                        window.location.href = '/';
                     });
 
                     detailTour.onExit(function () {
@@ -349,6 +358,7 @@
 
                     detailTour.start();
                 }, 300);
+
             }
         }
     </script>
