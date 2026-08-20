@@ -1,140 +1,180 @@
 <!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>不足状況カレンダー</title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intro.js@8.3.2/minified/introjs.min.css">
 </head>
+
 <body>
-<div class="container">
-    <h1>不足状況カレンダー</h1>
+    <div class="container">
+        <h1>不足状況カレンダー</h1>
 
-    <p class="page-description">
-        月ごとの不足状況を確認できます。不足がある日は色付きで表示されます。
-    </p>
+        <p class="page-description">
+            月ごとの不足状況を確認できます。不足がある日は色付きで表示されます。
+        </p>
 
-    <div class="summary-cards">
-        <div class="summary-card">
-            <div class="summary-label">不足ありの日数</div>
-            <div class="summary-value" th:text="${shortageDayCount} + '日'">0日</div>
-        </div>
-
-        <div class="summary-card">
-            <div class="summary-label">最大不足人数</div>
-            <div class="summary-value" th:text="${maxShortageCount} + '人'">0人</div>
-        </div>
-
-        <div class="summary-card">
-            <div class="summary-label">未設定の日数</div>
-            <div class="summary-value" th:text="${noSettingDayCount} + '日'">0日</div>
-        </div>
-
-        <div class="summary-card">
-            <div class="summary-label">最も注意が必要な日</div>
-            <div class="summary-value"
-                 th:text="${mostDangerousDate != null ? mostDangerousDate : '-'}">-
+        <div class="summary-cards">
+            <div class="summary-card">
+                <div class="summary-label">不足ありの日数</div>
+                <div class="summary-value" th:text="${shortageDayCount} + '日'">0日</div>
             </div>
+
+            <div class="summary-card">
+                <div class="summary-label">最大不足人数</div>
+                <div class="summary-value" th:text="${maxShortageCount} + '人'">0人</div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-label">未設定の日数</div>
+                <div class="summary-value" th:text="${noSettingDayCount} + '日'">0日</div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-label">最も注意が必要な日</div>
+                <div class="summary-value" th:text="${mostDangerousDate != null ? mostDangerousDate : '-'}">-
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-label">定休日の日数</div>
+                <div class="summary-value" th:text="${regularHolidayCount} + '日'">0日</div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-label">臨時休業の日数</div>
+                <div class="summary-value" th:text="${temporaryClosureCount} + '日'">0日</div>
+            </div>
+
         </div>
 
-        <div class="summary-card">
-            <div class="summary-label">定休日の日数</div>
-            <div class="summary-value" th:text="${regularHolidayCount} + '日'">0日</div>
+        <div class="calendar-header">
+            <a class="action-button" th:href="@{/shortages/calendar(year=${previousYear}, month=${previousMonth})}">
+                前月
+            </a>
+
+            <h2 th:text="${targetMonth.year} + '年' + ${targetMonth.monthValue} + '月'">
+                2026年6月
+            </h2>
+
+            <a class="action-button" th:href="@{/shortages/calendar(year=${nextYear}, month=${nextMonth})}">
+                次月
+            </a>
         </div>
-
-        <div class="summary-card">
-            <div class="summary-label">臨時休業の日数</div>
-            <div class="summary-value" th:text="${temporaryClosureCount} + '日'">0日</div>
-        </div>
-
-    </div>
-
-    <div class="calendar-header">
-        <a class="action-button"
-           th:href="@{/shortages/calendar(year=${previousYear}, month=${previousMonth})}">
-            前月
-        </a>
-
-        <h2 th:text="${targetMonth.year} + '年' + ${targetMonth.monthValue} + '月'">
-            2026年6月
-        </h2>
-
-        <a class="action-button"
-           th:href="@{/shortages/calendar(year=${nextYear}, month=${nextMonth})}">
-            次月
-        </a>
-    </div>
-    <form th:action="@{/shortages/calendar/create}" method="post" class="form-inline">
-        <!--
+        <form th:action="@{/shortages/calendar/create}" method="post" class="form-inline">
+            <!--
             今表示しているカレンダーの年を送る
             targetMonth は Controller から HTML に渡されている
         -->
-        <input type="hidden" name="year" th:value="${targetMonth.year}">
+            <input type="hidden" name="year" th:value="${targetMonth.year}">
 
-        <!--
+            <!--
             今表示しているカレンダーの月を送る
             例：7月なら 7 が送られる
         -->
-        <input type="hidden" name="month" th:value="${targetMonth.monthValue}">
+            <input type="hidden" name="month" th:value="${targetMonth.monthValue}">
 
-        <!--
+            <!--
             このボタンを押すと、POSTで /shortages/calendar/create に送信される
             既存の作成済みシフトは作り直されるため、確認メッセージを出す
         -->
-        <button type="submit"
+            <button type="submit" id="tutorial-auto-create"
                 onclick="return confirm('この月のシフトを自動作成します。既存のシフト結果は削除されます。よろしいですか？')">
-            この月のシフトを自動作成
-        </button>
-    </form>
-    <div class="calendar-legend">
-        <span><span class="legend-box enough-day"></span>不足なし</span>
-        <span><span class="legend-box shortage-day"></span>不足あり</span>
-        <span><span class="legend-box serious-shortage-day"></span>大きな不足</span>
-        <span><span class="legend-box no-setting-day"></span>未設定</span>
-        <span><span class="legend-box regular-holiday-day"></span>定休日</span>
-        <span><span class="legend-box temporary-closure-day"></span>臨時休業</span>
+                この月のシフトを自動作成
+            </button>
+        </form>
+        <div class="calendar-legend">
+            <span><span class="legend-box enough-day"></span>不足なし</span>
+            <span><span class="legend-box shortage-day"></span>不足あり</span>
+            <span><span class="legend-box serious-shortage-day"></span>大きな不足</span>
+            <span><span class="legend-box no-setting-day"></span>未設定</span>
+            <span><span class="legend-box regular-holiday-day"></span>定休日</span>
+            <span><span class="legend-box temporary-closure-day"></span>臨時休業</span>
+        </div>
+
+        <table class="calendar-table" id="tutorial-shortage-calendar">
+            <thead>
+                <tr>
+                    <th>日</th>
+                    <th>月</th>
+                    <th>火</th>
+                    <th>水</th>
+                    <th>木</th>
+                    <th>金</th>
+                    <th>土</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="week : ${calendarWeeks}">
+                    <td th:each="day : ${week}">
+                        <div th:if="${day != null}" class="calendar-day" th:classappend="${day.statusClass}">
+
+                            <a th:if="${day.hasRequiredStaff and !day.regularHoliday and !day.temporaryClosure}"
+                                th:href="@{/shortages(date=${day.date})}">
+                                <div class="calendar-date" th:text="${day.dayOfMonth}">1</div>
+                                <div class="calendar-status" th:text="${day.statusText}">不足なし</div>
+                                <div class="calendar-sub" th:text="${day.subText}">OK</div>
+                            </a>
+
+                            <div th:if="${!day.hasRequiredStaff or day.regularHoliday or day.temporaryClosure}">
+                                <div class="calendar-date" th:text="${day.dayOfMonth}">1</div>
+                                <div class="calendar-status" th:text="${day.statusText}">未設定</div>
+                                <div class="calendar-sub" th:text="${day.subText}"></div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p class="back-link">
+            <a href="/">トップページへ戻る</a>
+        </p>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/intro.js@8.3.2/minified/intro.min.js"></script>
 
-    <table class="calendar-table">
-        <thead>
-        <tr>
-            <th>日</th>
-            <th>月</th>
-            <th>火</th>
-            <th>水</th>
-            <th>木</th>
-            <th>金</th>
-            <th>土</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="week : ${calendarWeeks}">
-            <td th:each="day : ${week}">
-                <div th:if="${day != null}"
-                     class="calendar-day"
-                     th:classappend="${day.statusClass}">
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
 
-                    <a th:if="${day.hasRequiredStaff and !day.regularHoliday and !day.temporaryClosure}"
-                       th:href="@{/shortages(date=${day.date})}">
-                        <div class="calendar-date" th:text="${day.dayOfMonth}">1</div>
-                        <div class="calendar-status" th:text="${day.statusText}">不足なし</div>
-                        <div class="calendar-sub" th:text="${day.subText}">OK</div>
-                    </a>
+            const tutorialStep = sessionStorage.getItem('tutorialStep');
 
-                    <div th:if="${!day.hasRequiredStaff or day.regularHoliday or day.temporaryClosure}">
-                        <div class="calendar-date" th:text="${day.dayOfMonth}">1</div>
-                        <div class="calendar-status" th:text="${day.statusText}">未設定</div>
-                        <div class="calendar-sub" th:text="${day.subText}"></div>
-                    </div>
-                </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+            if (tutorialStep === '9') {
 
-    <p class="back-link">
-        <a href="/">トップページへ戻る</a>
-    </p>
-</div>
+                sessionStorage.removeItem('tutorialStep');
+
+                const tour = introJs.tour();
+
+                tour.setOptions({
+                    steps: [
+                        {
+                            element: document.querySelector('#tutorial-auto-create'),
+                            title: 'STEP 9',
+                            intro: '勤務希望と必要人数をもとに、ここから1か月分のシフトを自動作成できます。'
+                        },
+                        {
+                            element: document.querySelector('#tutorial-shortage-calendar'),
+                            title: 'STEP 10',
+                            intro: '自動作成したシフトの不足状況は、このカレンダーで確認できます。'
+                        }
+                    ],
+
+                    doneLabel: '次へ',
+                    exitOnEsc: true,
+                    exitOnOverlayClick: true,
+                    disableInteraction: true
+                });
+
+                tour.onComplete(function () {
+                    sessionStorage.setItem('tutorialStep', '11');
+                });
+
+                tour.start();
+            }
+        });
+    </script>
 </body>
+
 </html>

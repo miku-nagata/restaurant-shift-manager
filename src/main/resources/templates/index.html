@@ -56,7 +56,9 @@
         <section class="quick-actions">
             <h2>管理者向けの操作</h2>
             <div class="action-buttons">
-                <a href="/shortages/calendar" class="action-button primary">不足状況を確認する</a>
+                <a href="/shortages/calendar" class="action-button primary" id="tutorial-shortage">
+                    シフト作成
+                </a>
                 <a href="/required-staff-patterns" class="action-button" id="tutorial-required-staff">
                     曜日別必要人数パターン
                 </a>
@@ -174,8 +176,8 @@
                 </a>
 
                 <a href="/shortages/calendar" class="menu-card">
-                    <h3>不足状況カレンダー</h3>
-                    <p>必要人数に対して人員が足りているか確認します。</p>
+                    <h3>シフト作成</h3>
+                    <p>シフトを作成し、必要人数に対して人員が足りているか確認します。</p>
                 </a>
 
                 <a href="/required-staff-patterns" class="menu-card">
@@ -269,6 +271,36 @@
 
                 tour.start();
             }
+
+            if (tutorialStep === '8') {
+
+                // STEP8を開始したので、保存していた値はいったん消す
+                sessionStorage.removeItem('tutorialStep');
+
+                const tour = introJs.tour();
+
+                tour.setOptions({
+                    steps: [
+                        {
+                            element: document.querySelector('#tutorial-shortage'),
+                            title: 'STEP 8',
+                            intro: '勤務希望を確認したら次はシフトを作成します。'
+                        }
+                    ],
+                    doneLabel: '次へ',
+                    exitOnEsc: true,
+                    exitOnOverlayClick: true,
+                    disableInteraction: true
+                });
+
+                tour.onComplete(function () {
+                    sessionStorage.setItem('tutorialStep', '9');
+                    window.location.href = '/shortages/calendar';
+                });
+
+                tour.start();
+            }
+
         });
 
     </script>
