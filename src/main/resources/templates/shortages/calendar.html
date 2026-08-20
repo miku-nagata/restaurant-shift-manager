@@ -162,7 +162,6 @@
                     ],
 
                     nextLabel: '次へ',
-                    prevLabel: '戻る',
                     doneLabel: '次へ',
                     exitOnEsc: true,
                     exitOnOverlayClick: true,
@@ -171,7 +170,45 @@
 
                 tour.onComplete(function () {
                     sessionStorage.setItem('tutorialStep', '11');
+
+                    setTimeout(function () {
+                        startShortageDayTutorial();
+                    }, 100);
                 });
+                function startShortageDayTutorial() {
+
+                    const shortageDay = document.querySelector(
+                        '.calendar-day.shortage-day a, .calendar-day.serious-shortage-day a'
+                    );
+
+                    if (!shortageDay) {
+                        console.log('不足日のリンクが見つかりません');
+                        return;
+                    }
+
+                    const shortageTour = introJs.tour();
+
+                    shortageTour.setOptions({
+                        steps: [
+                            {
+                                element: shortageDay,
+                                title: 'STEP 11',
+                                intro: '不足がある日をクリックすると、時間帯ごとの詳しい不足状況を確認できます。'
+                            }
+                        ],
+
+                        showButtons: false,
+                        exitOnEsc: true,
+                        exitOnOverlayClick: true,
+                        disableInteraction: false
+                    });
+
+                    shortageDay.addEventListener('click', function () {
+                        sessionStorage.setItem('tutorialStep', '12');
+                    }, { once: true });
+
+                    shortageTour.start();
+                }
 
                 tour.start();
             }

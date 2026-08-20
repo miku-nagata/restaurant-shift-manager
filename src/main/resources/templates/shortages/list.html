@@ -1,53 +1,54 @@
 <!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>不足時間確認</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
+
 <body>
-<div class="container">
-    <h1>不足時間確認</h1>
+    <div class="container">
+        <h1>不足時間確認</h1>
 
-    <p class="page-description">
-        必要人数と作成済みシフト人数を30分単位で比較
-    </p>
+        <p class="page-description">
+            必要人数と作成済みシフト人数を30分単位で比較
+        </p>
 
-    <table>
-        <thead>
-        <tr>
-            <th>日付</th>
-            <th>開始時刻</th>
-            <th>終了時刻</th>
-            <th>必要人数</th>
-            <th>出勤希望人数</th>
-            <th>不足人数</th>
-            <th>状態</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="row : ${shortageRows}"
-            th:classappend="${row.shortage} ? 'shortage'">
-            <td th:text="${row.workDate}">2026-06-28</td>
-            <td th:text="${row.startTime}">09:00</td>
-            <td th:text="${row.endTime}">11:00</td>
-            <td th:text="${row.requiredCount}">3</td>
-            <td th:text="${row.availableCount}">2</td>
-            <td th:text="${row.shortageCount}">1</td>
-            <td>
-                <span th:class="${row.shortage} ? 'status-badge shortage-badge' : 'status-badge enough-badge'"
-                      th:text="${row.statusText}">
-                    不足あり
-                </span>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+        <table>
+            <thead>
+                <tr>
+                    <th>時間帯</th>
+                    <th>必要人数</th>
+                    <th>配置</th>
+                    <th>不足人数</th>
+                    <th>状態</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="row : ${shortageRows}" th:classappend="${row.shortage} ? 'shortage'">
+                    <td>
+                        <span th:text="${row.startTime}">09:00</span>
+                        <span th:text="${row.endTime}">11:00</span>
+                    </td>
+                    <td th:text="${row.requiredCount}">3</td>
+                    <td th:text="${row.availableCount}">2</td>
+                    <td th:text="${row.shortageCount}">1</td>
+                    <td>
+                        <span th:class="${row.shortage} ? 'status-badge shortage-badge' : 'status-badge enough-badge'"
+                            th:text="${row.statusText}">
+                            不足あり
+                        </span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
-    <p class="back-link">
-        <a href="/">トップページへ戻る</a>
-    </p>
-</div>
+        <p class="back-link">
+            <a href="/">トップページへ戻る</a>
+        </p>
+    </div>
 </body>
+
 </html>
