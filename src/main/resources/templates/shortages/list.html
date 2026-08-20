@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>不足時間確認</title>
     <link rel="stylesheet" href="/css/style.css">
-</head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intro.js@8.3.2/minified/introjs.min.css">
 
 <body>
     <div class="container">
@@ -16,7 +16,7 @@
             必要人数と作成済みシフト人数を30分単位で比較
         </p>
 
-        <table>
+        <table id="tutorial-shortage-detail">
             <thead>
                 <tr>
                     <th>時間帯</th>
@@ -49,6 +49,42 @@
             <a href="/">トップページへ戻る</a>
         </p>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/intro.js@8.3.2/minified/intro.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const tutorialStep = sessionStorage.getItem('tutorialStep');
+
+            if (tutorialStep === '12') {
+
+                sessionStorage.removeItem('tutorialStep');
+
+                const tour = introJs.tour();
+
+                tour.setOptions({
+                    steps: [
+                        {
+                            element: document.querySelector('#tutorial-shortage-detail'),
+                            title: 'STEP 12',
+                            intro: 'ここでは、30分単位で必要人数・配置人数・不足人数を確認できます。'
+                        }
+                    ],
+
+                    doneLabel: '完了',
+                    exitOnEsc: true,
+                    exitOnOverlayClick: true,
+                    disableInteraction: true
+                });
+
+                tour.onComplete(function () {
+                    window.location.href = '/';
+                });
+
+                tour.start();
+            }
+        });
+    </script>
 </body>
 
 </html>
