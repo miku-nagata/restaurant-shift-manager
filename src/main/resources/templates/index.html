@@ -300,6 +300,33 @@
 
                 tour.start();
             }
+            if (tutorialStep === 'complete') {
+
+                const completeTour = introJs.tour();
+
+                completeTour.setOptions({
+                    steps: [
+                        {
+                            title: 'チュートリアル完了',
+                            intro: 'これでチュートリアルは終了です。各機能を自由にご覧ください。'
+                        }
+                    ],
+
+                    doneLabel: '閉じる',
+                    exitOnEsc: true,
+                    exitOnOverlayClick: true
+                });
+
+                completeTour.onComplete(function () {
+                    sessionStorage.removeItem('tutorialStep');
+                });
+
+                completeTour.onExit(function () {
+                    sessionStorage.removeItem('tutorialStep');
+                });
+
+                completeTour.start();
+            }
 
         });
 

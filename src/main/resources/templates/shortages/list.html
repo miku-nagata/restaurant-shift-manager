@@ -90,9 +90,7 @@
 
                 tour.onComplete(function () {
 
-                    console.log('STEP12完了');
-
-                    sessionStorage.removeItem('tutorialStep');
+                    sessionStorage.removeItem('tutorialStep', 'complete');
 
                     window.location.href = '/';
                 });
