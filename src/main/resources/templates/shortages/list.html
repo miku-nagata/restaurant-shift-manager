@@ -90,7 +90,8 @@
 
                 tour.onComplete(function () {
 
-                    sessionStorage.removeItem('tutorialStep', 'complete');
+                    // トップページで終了メッセージを表示するために保存
+                    sessionStorage.setItem('tutorialStep', 'complete');
 
                     window.location.href = '/';
                 });
