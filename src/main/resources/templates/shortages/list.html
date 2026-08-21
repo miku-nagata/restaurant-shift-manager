@@ -7,6 +7,7 @@
     <title>不足時間確認</title>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intro.js@8.3.2/minified/introjs.min.css">
+</head>
 
 <body>
     <div class="container">
@@ -56,16 +57,26 @@
 
             const tutorialStep = sessionStorage.getItem('tutorialStep');
 
+            console.log('STEP12ページ');
+            console.log('tutorialStep =', tutorialStep);
+
             if (tutorialStep === '12') {
 
-                sessionStorage.removeItem('tutorialStep');
+                const target = document.querySelector('#tutorial-shortage-detail');
+
+                console.log('STEP12対象要素 =', target);
+
+                if (!target) {
+                    console.log('STEP12の対象要素が見つかりません');
+                    return;
+                }
 
                 const tour = introJs.tour();
 
                 tour.setOptions({
                     steps: [
                         {
-                            element: document.querySelector('#tutorial-shortage-detail'),
+                            element: target,
                             title: 'STEP 12',
                             intro: 'ここでは、30分単位で必要人数・配置人数・不足人数を確認できます。'
                         }
@@ -78,7 +89,19 @@
                 });
 
                 tour.onComplete(function () {
+
+                    console.log('STEP12完了');
+
+                    sessionStorage.removeItem('tutorialStep');
+
                     window.location.href = '/';
+                });
+
+                tour.onExit(function () {
+
+                    console.log('STEP12終了');
+
+                    sessionStorage.removeItem('tutorialStep');
                 });
 
                 tour.start();
